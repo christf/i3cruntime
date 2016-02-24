@@ -21,10 +21,15 @@ public:
     // 10-15  RESERVIERT
   };
   
-  Operation(uint8_t operation, std::vector<uint8_t> params) ;
+  Operation(uint8_t opcode, std::vector<uint8_t> params);
+
+  const uint8_t opcode() const throw();
+
+  const std::vector<uint8_t>& params() const throw();
+
 private:
-  const uint8_t operation;
-  const std::vector<uint8_t> m_data;
+  const uint8_t m_opcode;
+  const std::vector<uint8_t> m_params;
 };
 
 
