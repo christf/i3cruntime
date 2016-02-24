@@ -1,11 +1,11 @@
-
-#ifndef I3COPERATION_H__
-#define I3COPERATION_H__
+#pragma once
 
 #include <inttypes.h>
 #include <vector>
 
-namespace master { namespace i3c {
+namespace i3c {
+namespace master {
+
 class Operation {
 public:
   enum class i3c_operation {
@@ -26,6 +26,8 @@ private:
   const uint8_t operation;
   const std::vector<uint8_t> m_data;
 };
-}
-}
-#endif
+
+
+}  // namespace master
+}  // namespace i3c
+
