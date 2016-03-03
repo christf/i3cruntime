@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.9)
 
 project (I3CMASTER CXX)
 
-set(CMAKE_CXX_FLAGS "-std=c++14")
+set(CMAKE_CXX_FLAGS "-std=c++14 -Os")
 
 ### Check the I2C library
 
@@ -49,6 +49,7 @@ sys/i2c/i2cendpoint.cpp
 sys/i2c/i2cendpointbroker.cpp
 sys/i2c/i2cendpointexception.cpp
 master/i3cendpoint.cpp
+server.cpp
 master/i3cendpointbroker.cpp
 master/i3c_commhandler.cpp
 master/operation.cpp

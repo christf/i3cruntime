@@ -17,9 +17,9 @@
 
 #include "i3cendpoint.h"
 #include "i3cpacket.h"
-namespace master
-{
 namespace i3c
+{
+namespace master
 {
 // I3CEndpoint::I3CEndpoint ( const I3CEndpoint& other ) : I3CEndpoint()
 // {
@@ -40,25 +40,31 @@ uint8_t I3CEndpoint::write ( Operation operation ) throw ( I2CEndpointException 
 
 }
 
-
-// I3CEndpoint::I3CEndpoint ( const I3CEndpoint& other )
-// {
-//   // TODO implementieren
-// this->m_bus_priority atu= other.m_bus_priority;
-// this->m_i2c_endpoint = other.m_i2c_endpoint;
-// }
-
 // TODO use packetcounter enum
 I3CEndpoint::I3CEndpoint ( I2CAddress address, enum endpoint_priority priority ) throw ( I2CEndpointException )
-: m_address(
-
-address),
+: m_address(address),
 m_count ( 0 ),m_packetcounter ( 0 ) ,
 m_bus_priority ( priority )
 {
     // TODO implementieren
 // //   m_i2c_endpoint = i
 }
+
+std::ostream& operator<< ( std::ostream &out, const I3CEndpoint &endpoint )
+{
+  std::bitset<8> adr ( endpoint.m_address );
+  std::bitset<8> pc ( endpoint.m_count );
+  // std::bitset<8> prio ( endpoint.m_bus_priority );
+  out << "[ address: " << std::hex << unsigned ( endpoint.m_address )  << "(" << adr << ") PacketCounter: "  << unsigned ( endpoint.m_count ) <<
+  " (" << pc << ") priority: " << unsigned ( endpoint.m_bus_priority ) << "]" << std::endl;
+  return out;
+}
+
+I3CEndpoint::~I3CEndpoint() throw()
+{
+
+}
+
 
 
 }

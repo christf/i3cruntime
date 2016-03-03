@@ -37,18 +37,7 @@ using namespace libconfig;
 // This example reads the configuration file 'example.cfg' and displays
 // some of its contents.
 
-endpoint_priority stringToEnum(string input) throw (std::runtime_error) {
-if (input.compare("REALTIME") == 0)
-		return endpoint_priority::REALTIME;
-if (input.compare("HIGH") == 0)
-		return endpoint_priority::HIGH;
-if (input.compare("MEDIUM") == 0 )
-		return endpoint_priority::MEDIUM;
-if (input.compare("LOW") == 0 )
-	return endpoint_priority::LOW;
 
-throw(std::runtime_error("parsing error in config-file, could not parse buspriority. Use one of REALTIME, HIGH, MEDIUM, LOW"));
-}
 
 int main(int argc, char **argv)
 {

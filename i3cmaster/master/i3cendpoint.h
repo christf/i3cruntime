@@ -23,10 +23,13 @@
 #include "../sys/i2c/i2cendpoint.h"
 #include <memory>
 #include "operation.h"
+#include <iostream>
+#include <bitset>
+
 using namespace i3c::sys::i2c;
-namespace master 
-{
 namespace i3c
+{
+namespace master 
 {
   enum class endpoint_priority {
     LOW = 0,
@@ -34,6 +37,19 @@ namespace i3c
     HIGH = 2,
     REALTIME = 3
   };
+
+  static endpoint_priority stringToEnum(std::string input) throw (std::runtime_error) {
+    if (input.compare("REALTIME") == 0)
+      return endpoint_priority::REALTIME;
+    if (input.compare("HIGH") == 0)
+      return endpoint_priority::HIGH;
+    if (input.compare("MEDIUM") == 0 )
+      return endpoint_priority::MEDIUM;
+    if (input.compare("LOW") == 0 )
+      return endpoint_priority::LOW;
+
+    throw(std::runtime_error("could not parse buspriority. Use one of REALTIME, HIGH, MEDIUM, LOW"));
+  }
   
   //! I3C communication endpoint
   /*!
@@ -85,7 +101,8 @@ namespace i3c
      */
      uint8_t read ( const int reg ) throw ( I2CEndpointException );
 
-  
+     //! for easy printing
+     friend std::ostream& operator<< ( std::ostream &out, const I3CEndpoint &endpoint );
 
   protected:
     int _fd() const throw();
