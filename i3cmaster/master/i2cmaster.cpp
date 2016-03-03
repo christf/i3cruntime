@@ -251,17 +251,17 @@ int main()
             //      uint8_t address;
             int address;
             string prio;
-            enum master::i3c::endpoint_priority eprio;
+	    enum i3c::master::endpoint_priority eprio;
             if ( ! ( i3ce.lookupValue ( "name", name )
                      && i3ce.lookupValue ( "address", address )
                      && i3ce.lookupValue ( "buspriority", prio )
                    ) ) {
                 continue;
             }
-            eprio = master::i3c::stringToEnum ( prio );
+            eprio = i3c::master::stringToEnum ( prio );
             const i3c::sys::i2c::I2CAddress adr ( address );
 
-            const master::i3c::I3CEndpoint ep ( adr,eprio )  ;
+	    const i3c::master::I3CEndpoint ep ( adr,eprio )  ;
             cout << setw ( 30 ) << left << name << "  "
                  << setw ( 10 ) << left << address << "  "
                  << setw ( 6 ) << left << unsigned ( eprio ) << "  "
