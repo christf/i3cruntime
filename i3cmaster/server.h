@@ -17,6 +17,8 @@
 #include <thread>
 #include <mutex>
 #include "connection.h"
+#include <vector>
+
 class Server
 {
         const int MAXFD = 10;
@@ -27,7 +29,7 @@ private:
         int m_server_fd;
         volatile fd_set the_state;
         static std::mutex assignconnection;
-
+std::vector<Connection> connections;
 public:
         Server ( int tcp_port );
         void run();

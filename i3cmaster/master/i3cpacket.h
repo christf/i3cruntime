@@ -6,6 +6,7 @@
 #include <bitset>
 #include <stdexcept>
 #include "../sys/i2c/i2cpacket.h"
+#include <sstream>
 
 using namespace i3c::sys::i2c;
 

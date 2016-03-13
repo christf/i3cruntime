@@ -1,7 +1,7 @@
 #include "server.h"
 
 
-Server::Server ( int i3cport )
+Server::Server ( int i3cport ) : connections()
 {
     struct addrinfo hostinfo, *res;
 
@@ -96,31 +96,21 @@ void Server::run()
 {
     std::thread threads[MAXFD]; //create 10 handles for threads.
 
-    FD_ZERO ( &the_state ); // FD_ZERO clears all the filedescriptors in the file descriptor set fds.
+//     FD_ZERO ( &the_state ); // FD_ZERO clears all the filedescriptors in the file descriptor set fds.
 
     while ( 1 ) { // start looping here
-        int rfd;
+//         int rfd;
         int *arg;
-        Connection c ( m_server_fd );
+//         Connection c ( m_server_fd );
         // if a client is trying to connect, establish the connection and create a fd for the client.
-        rfd = c.establish();
-
-        if ( rfd >= 0 ) {
-            std::cout << "Client connected. Using file desciptor " << rfd << std::endl;
-            if ( rfd > MAXFD ) {
-                std::cout << "To many clients trying to connect." << std::endl;
-                close ( rfd );
-                continue;
-            }
-
-//             assignconnection.lock();
-//       pthread_mutex_lock(&mutex_state);  // Make sure no 2 threads can create a fd simultanious.
-
-            FD_SET ( rfd, &the_state ); // Add a file descriptor to the FD-set.
-//             assignconnection.unlock();
-//       pthread_mutex_unlock(&mutex_state); // End the mutex lock
-
-//             arg = ( int * ) rfd;
+// TODO: use vector of clients, only allow connection if its size is smaller than MAXFD
+	if (connections.size() < MAXFD){
+// 	 c.establish();
+	  //TODO: guards
+	  Connection c(m_server_fd);
+	connections.push_back(c);
+	// TODO: how to remove dead connections? => I could change the parameter for the constructor of Connections to a Server,
+// 	// pass it by reference and call some member method to remove it from the queue. <- rampant layering violation alert.
 
 //        server_send(rfd, welcome_msg); // send a welcome message/instructions.
 
@@ -131,7 +121,7 @@ void Server::run()
 	    c.run();
 //             threads[rfd].join();
 //  	    threads[rfd] ( this->bla);
-        }
+         }
     }
 }
 

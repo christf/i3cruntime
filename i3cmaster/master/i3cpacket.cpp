@@ -25,7 +25,9 @@ uint8_t I3CPacket::getMeta() const
     return meta;
 }
 
-#include <sstream>
+
+
+
 
 
 I3CPacket::I3CPacket ( const I2CAddress source, const uint16_t data ) throw ( std::runtime_error )
