@@ -10,7 +10,7 @@ set(CMAKE_CXX_FLAGS "-std=c++14 -Os")
 find_library(WIRINGPI_LIBRARY NAMES wiringPi wiringPiDev)
 if (WIRINGPI_LIBRARY)
   # add the wiring pi files
-  set(WIRINGPI_FILES
+  set(WIRINGPI_FILES connection.cpp
       platform/rpi/wiringpii2cendpoint.cpp
       platform/rpi/wiringpii2cendpointbroker.cpp
   )
