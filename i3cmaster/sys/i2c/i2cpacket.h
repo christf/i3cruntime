@@ -19,7 +19,8 @@
 #include <cstdint>
 
 #include "i2caddress.h"
-
+#include <libconfig.h++>
+#include <string>
 namespace i3c {
 namespace sys {
 namespace i2c {
@@ -29,15 +30,15 @@ enum class I2COperation {
   //! Simple device read_16
   READ_SIMPLE = 0,
   //! Simple device write_16
-  WRITE_SIMPLE,
+  WRITE_SIMPLE = 1,
   //! Read 8 bits of data from a device register.
-  READ_REG_8,
+  READ_REG_8 = 2,
   //! Read 16 bits of data from a device register.
-  READ_REG_16,
+  READ_REG_16 = 3,
   //! Write 8 bits of data to a device register.
-  WRITE_REG_8,
+  WRITE_REG_8 = 4,
   //! Write 16 bits of data to a device register.
-  WRITE_REG_16
+  WRITE_REG_16 = 5
 };
 
 //! Packet plus meta-data for I2C communication
@@ -52,6 +53,9 @@ public:
 	    const I2CAddress peer,
 	    const I2COperation op,
 	    const uint16_t data) throw(std::invalid_argument);
+
+  //! Create a new packet from config data
+  I2CPacket(const std::string s_config);
 
   //! Create a new packet from values with register.
   /**

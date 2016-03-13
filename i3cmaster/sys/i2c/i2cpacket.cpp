@@ -56,6 +56,31 @@ I2CPacket::I2CPacket(const I2CPacket& other, const uint16_t data) throw()
 {
 }
 
+uint16_t configextract(libconfig::Config cfg, std::string field) {
+  // Get the store name.
+  uint16_t data;
+  // try {
+    return (uint16_t)(int)cfg.lookup ( field );
+  // }
+  // catch ( const SettingNotFoundException &nfex ) {
+   // std::cerr << "No " << field << " setting in input data." << endl;
+ // }
+ // return data;
+}
+
+I2CPacket::I2CPacket ( const std::string s_config )
+{
+libconfig::Config cfg;
+cfg.readString(s_config);
+m_seqNo (configextract (cfg, "m_seqNo"));
+m_peer((uint8_t)configextract(cfg,"I2CAddress"));
+m_op( (I2COperation)(uint8_t)configextract(cfg,"I2COperation"));
+m_reg(configextract(cfg, "Register")),
+m_data((uint16_t)configextract(cfg,"data"));
+
+}
+}
+
 
 I2CPacket::I2CPacket(const I2CPacket &other) throw()
 : m_seqNo(other.m_seqNo),

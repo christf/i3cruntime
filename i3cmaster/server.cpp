@@ -109,6 +109,7 @@ void Server::run()
 	  //TODO: guards
 	  Connection c(m_server_fd);
 	connections.push_back(c);
+	// FIXME: Because of the unimplemented freeing of resources the server stops working after 10 connections
 	// TODO: how to remove dead connections? => I could change the parameter for the constructor of Connections to a Server,
 // 	// pass it by reference and call some member method to remove it from the queue. <- rampant layering violation alert.
 
