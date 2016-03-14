@@ -13,6 +13,14 @@
 #include <errno.h>
 #include <thread>
 #include <mutex>
+#include "sys/i2c/i2cpacket.h"
+#include "sys/i2c/i2caddress.h"
+#include <libconfig.h++>
+#include <iostream>
+#include <iomanip>
+#include <type_traits>
+
+#include <cstdint>
 
 class Connection
 {
@@ -23,7 +31,7 @@ private:
 
         int m_sd;
         std::mutex *assignconnection;
-        void do_command ( char *command );
+        void do_command ( std::vector<i3c::sys::i2c::I2CPacket> packets);
 
 
 public:

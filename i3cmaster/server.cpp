@@ -96,16 +96,11 @@ void Server::run()
 {
     std::thread threads[MAXFD]; //create 10 handles for threads.
 
-//     FD_ZERO ( &the_state ); // FD_ZERO clears all the filedescriptors in the file descriptor set fds.
-
     while ( 1 ) { // start looping here
-//         int rfd;
         int *arg;
-//         Connection c ( m_server_fd );
         // if a client is trying to connect, establish the connection and create a fd for the client.
-// TODO: use vector of clients, only allow connection if its size is smaller than MAXFD
+
 	if (connections.size() < MAXFD){
-// 	 c.establish();
 	  //TODO: guards
 	  Connection c(m_server_fd);
 	connections.push_back(c);

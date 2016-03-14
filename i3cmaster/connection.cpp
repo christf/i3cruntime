@@ -1,8 +1,4 @@
 #include "connection.h"
-#include <string>
-#include "sys/i2c/i2cpacket.h"
-#include "sys/i2c/i2caddress.h"
-#include <libconfig.h++>
 
 
 uint16_t configextract ( libconfig::Config *cfg, std::string field )
@@ -17,11 +13,7 @@ uint16_t configextract ( libconfig::Config *cfg, std::string field )
     // }
     // return data;
 }
-#include <iostream>
-#include <iomanip>
-#include <type_traits>
 
-#include <cstdint>
 typedef std::uint64_t hash_t;
 constexpr hash_t prime = 0x100000001B3ull;
 constexpr hash_t basis = 0xCBF29CE484222325ull;
@@ -110,9 +102,7 @@ std::vector<I2CPacket> genpacket ( const std::string s_config )
         std::cout << "parsing the string did not work. check the data for flaws." <<std::endl;
     }
 //     std::cout << packets << std::endl;
-    for ( std::vector<I2CPacket>::const_iterator i = packets.begin(); i != packets.end(); ++i ) {
-        std::cout << *i << ' ';
-    }
+
     return packets;
 }
 
@@ -166,9 +156,8 @@ const void Connection::run ( )
         } else {
             // TODO: do something useful with the data that was received
             std::string bla ( buf, buflen );
-            std::cout << "read data from client " << m_sd << ": " << bla;
-            genpacket ( bla );
-            do_command ( buf ) ;
+            std::cout << "reading data from client " << m_sd << ": " << bla;
+	    do_command (  genpacket ( bla ) ) ;
         }
         /*
          *            // send the data to the other connected clients
@@ -196,12 +185,16 @@ const void Connection::run ( )
     //     return NULL;
 }
 
-void  Connection::do_command ( char * command ) // function that will handle commands
+void  Connection::do_command ( std::vector<I2CPacket> packets ) // function that will handle commands
 {
+
+  for ( std::vector<I2CPacket>::const_iterator i = packets.begin(); i != packets.end(); ++i ) {
+    std::cout << *i << ' ';
+  }
     //   if (command[0]== '1')printchessboard(client) ;  // Show the chessboard.
     //   if (command[0]== '9')newgame() ;                // Reset the chessboard.
     // Checking if 'command' is a valid command for making a move.
-    if ( command[0] >= 'a' && command[0] <= 'h' && command[1] >= '1' && command[1] <= '8' && command[2] >= 'a' && command[2] <= 'h' && command[3] >= '1' && command[3] <= '8' ) {
+//     if ( command[0] >= 'a' && command[0] <= 'h' && command[1] >= '1' && command[1] <= '8' && command[2] >= 'a' && command[2] <= 'h' && command[3] >= '1' && command[3] <= '8' ) {
         //     if(movepiece(command)) ; // and if it is, try to move the piece and print the new chessboard to all connected clients.
         //     {
         //print chessboard to all
@@ -211,7 +204,7 @@ void  Connection::do_command ( char * command ) // function that will handle com
         //     send(client, command);
         //     send(client,  "\n");
 //     server::send ( m_fd, 0x00, 0 );
-    }
+//     }
 }
 
 
