@@ -56,6 +56,26 @@ I2CPacket::I2CPacket(const I2CPacket& other, const uint16_t data) throw()
 {
 }
 
+// #include <hex>
+
+std::ostream& operator<< ( std::ostream &out, const I2CPacket &packet )
+{
+  std::bitset<8> bdest ( packet.m_peer );
+  std::bitset<8> bseq ( packet.m_seqNo );
+//   std::bitset<8> bmeta = 0x00;
+  std::bitset<8> bdata ( packet.m_data );
+  std::bitset<8> breg ( packet.m_reg );
+//   const uint16_t m_seqNo;
+//   const I2CAddress m_peer;
+//TODO   const I2COperation m_op;
+//   const uint8_t m_reg;
+//   const uint16_t m_data;
+
+
+  out << "[ destination: " << std::hex << unsigned ( packet.m_peer )  << "(" << bdest << ") sequenz: "  << unsigned ( packet.m_seqNo ) <<
+  " (" << bseq << ") data: " << unsigned ( packet.m_data ) << "(" << bdata  << ") register; " << unsigned(packet.m_reg ) << " (" << breg <<  ") operation: " << (int)packet.m_op << ") ]" << std::endl;
+  return out;
+}
 
 I2CPacket::I2CPacket(const I2CPacket &other) throw()
 : m_seqNo(other.m_seqNo),

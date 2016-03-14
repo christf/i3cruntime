@@ -19,6 +19,9 @@
 #include <cstdint>
 
 #include "i2caddress.h"
+#include <sstream>
+#include <iostream>
+#include <bitset>
 
 namespace i3c {
 namespace sys {
@@ -29,15 +32,15 @@ enum class I2COperation {
   //! Simple device read_16
   READ_SIMPLE = 0,
   //! Simple device write_16
-  WRITE_SIMPLE,
+  WRITE_SIMPLE = 1,
   //! Read 8 bits of data from a device register.
-  READ_REG_8,
+  READ_REG_8 = 2,
   //! Read 16 bits of data from a device register.
-  READ_REG_16,
+  READ_REG_16 = 3,
   //! Write 8 bits of data to a device register.
-  WRITE_REG_8,
+  WRITE_REG_8 = 4,
   //! Write 16 bits of data to a device register.
-  WRITE_REG_16
+  WRITE_REG_16 = 5
 };
 
 //! Packet plus meta-data for I2C communication
@@ -85,6 +88,8 @@ public:
   //! The 16 bit data sent over the I2C bus.
   const uint16_t data() const throw();
 
+  //! for easy printing
+  friend std::ostream& operator<< ( std::ostream &out, const I2CPacket &packet );
 private:
   const uint16_t m_seqNo;
   const I2CAddress m_peer;
