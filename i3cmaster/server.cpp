@@ -102,7 +102,7 @@ void Server::run()
 
 	if (connections.size() < MAXFD){
 	  //TODO: guards
-	  Connection c(m_server_fd);
+	  Connection c(m_server_fd, &connections);
 	connections.push_back(c);
 	// TODO: how to remove dead connections? => I could change the parameter for the constructor of Connections to a Server,
 // 	// pass it by reference and call some member method to remove it from the queue. <- rampant layering violation alert.

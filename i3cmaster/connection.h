@@ -25,11 +25,12 @@
 class Connection
 {
 public:
-        Connection ( int fd );
+        Connection ( int fd, std::vector<Connection> *clist );
 private:
         const int m_server_fd;
 
         int m_sd;
+	const std::vector<Connection> *m_clist;
         std::mutex *assignconnection;
         void do_command ( std::vector<i3c::sys::i2c::I2CPacket> packets);
 

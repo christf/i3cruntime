@@ -1,19 +1,6 @@
 #include "connection.h"
 
 
-uint16_t configextract ( libconfig::Config *cfg, std::string field )
-{
-    // Get the store name.
-    uint16_t data;
-    // try {
-    return ( uint16_t ) ( int ) cfg->lookup ( field );
-    // }
-    // catch ( const SettingNotFoundException &nfex ) {
-    // std::cerr << "No " << field << " setting in input data." << endl;
-    // }
-    // return data;
-}
-
 typedef std::uint64_t hash_t;
 constexpr hash_t prime = 0x100000001B3ull;
 constexpr hash_t basis = 0xCBF29CE484222325ull;
@@ -41,7 +28,7 @@ I2COperation strtoOp(std::string strop) {
   }
 }
 
-#include <vector>
+
 
 std::vector<I2CPacket> genpacket ( const std::string s_config )
 {
@@ -78,36 +65,29 @@ std::vector<I2CPacket> genpacket ( const std::string s_config )
                      && packet.lookupValue ( "Sequence", seqNo )
                      && packet.lookupValue ( "Data", data )
                    ) ) {
-                std::cout << "something broke" << " fuck" << std::endl;
+                std::cout << "something broke" << std::endl;
                 continue;
             }
 
 //             seqNo = configextract ( &cfg, "Sequence" );
             I2CAddress peer ( addressdata );
-//             std::cout << addressdata << std::endl;
-//             op = ( I2COperation ) ( uint8_t ) configextract ( &cfg,"I2COperation" ) ;
-// //             reg = ( uint8_t ) configextract ( &cfg, "Register" ) ,
-//             data =  configextract ( &cfg,"Data" ) ;
 	    op = strtoOp(strop);
 	    if (   packet.lookupValue ( "Register", reg ) ) {
-// 	     std::cout << "hier drin" << reg << std::endl;
-	     std::cout << "hier drin" << reg << " op: " << strop << std::endl;
+// 	     std::cout << "hier drin" << reg << " op: " << strop << std::endl;
                 packets.push_back ( I2CPacket ( seqNo, peer, op, reg, data ) );
             } else {
-	      std::cout << "da drin" << reg << " op: " << strop << std::endl;
+// 	      std::cout << "da drin" << reg << " op: " << strop << std::endl;
                 packets.push_back ( I2CPacket ( seqNo, peer, op,  data ) );
             }
         }
     } catch ( const libconfig::SettingNotFoundException &nfex ) {
         std::cout << "parsing the string did not work. check the data for flaws." <<std::endl;
     }
-//     std::cout << packets << std::endl;
-
     return packets;
 }
 
 
-Connection::Connection ( int fd ) :m_server_fd ( fd )
+Connection::Connection ( int fd, std::vector<Connection> *clist ) :m_server_fd ( fd ),m_clist(clist)
 {
     char ipstr[INET6_ADDRSTRLEN];
     int port;
@@ -136,6 +116,8 @@ Connection::Connection ( int fd ) :m_server_fd ( fd )
     std::cout << "Connection accepted from "  << ipstr <<  " using port " << port << std::endl;
     m_sd = new_sd;
 }
+
+
 const void Connection::run ( )
 /// This function runs in a thread for every client, and reads incoming data.
 /// It also writes the incoming data to all other clients.
@@ -152,12 +134,14 @@ const void Connection::run ( )
         if ( buflen <= 0 ) {
             std::cout << "client disconnected. Cleaning fd. " << m_sd << std::endl ;
             close ( m_sd );
+	    // TODO FIXME is vector really the correct data type? iterators are invalidated if the
+// 	    m_clist->erase(m_myindex);
             return;
         } else {
             // TODO: do something useful with the data that was received
-            std::string bla ( buf, buflen );
-            std::cout << "reading data from client " << m_sd << ": " << bla;
-	    do_command (  genpacket ( bla ) ) ;
+            std::string strbuf ( buf, buflen );
+            std::cout << "reading data from client " << m_sd << ": " << strbuf;
+	    do_command (  genpacket ( strbuf ) ) ;
         }
         /*
          *            // send the data to the other connected clients
@@ -191,31 +175,5 @@ void  Connection::do_command ( std::vector<I2CPacket> packets ) // function that
   for ( std::vector<I2CPacket>::const_iterator i = packets.begin(); i != packets.end(); ++i ) {
     std::cout << *i << ' ';
   }
-    //   if (command[0]== '1')printchessboard(client) ;  // Show the chessboard.
-    //   if (command[0]== '9')newgame() ;                // Reset the chessboard.
-    // Checking if 'command' is a valid command for making a move.
-//     if ( command[0] >= 'a' && command[0] <= 'h' && command[1] >= '1' && command[1] <= '8' && command[2] >= 'a' && command[2] <= 'h' && command[3] >= '1' && command[3] <= '8' ) {
-        //     if(movepiece(command)) ; // and if it is, try to move the piece and print the new chessboard to all connected clients.
-        //     {
-        //print chessboard to all
-        //       print_all() ;
-        //     }
-        //     send(client,  "\nYour move:");
-        //     send(client, command);
-        //     send(client,  "\n");
-//     server::send ( m_fd, 0x00, 0 );
-//     }
 }
-
-
-// int Connection::establish()
-// // This function will establish a connection between the server and the
-// // client. It will be executed for every new client that connects to the server.
-// // This functions returns the socket filedescriptor for reading the clients data
-// // or an error if it failed.
-// {
-//
-//     return new_sd;
-// }
-
 
