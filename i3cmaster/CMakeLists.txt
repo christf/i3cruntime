@@ -20,6 +20,13 @@ endif(WIRINGPI_LIBRARY)
 find_library(CONFIG_LIBRARIES NAMES config++)
 find_library(CONFIG_LIBRARIES NAMES pthread)
 
+# find the required Boost packages
+find_package( Boost 1.55 COMPONENTS
+  system
+  regex
+  REQUIRED)
+include_directories( ${Boost_INCLUDE_DIR} )
+
 add_executable(i3cmaster
 debug.cpp
 master/i3cmaster.cpp
@@ -69,3 +76,6 @@ endif(WIRINGPI_LIBRARY)
 
 target_link_libraries(i3cmaster ${CONFIG_LIBRARIES})
 target_link_libraries(i2cmaster ${CONFIG_LIBRARIES})
+
+target_link_libraries(i3cmaster ${Boost_LIBRARIES})
+target_link_libraries(i2cmaster ${Boost_LIBRARIES})
