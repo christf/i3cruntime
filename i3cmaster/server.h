@@ -3,6 +3,7 @@
 
 #include <string>
 #include <iostream>
+#include <string>
 #include <cstring> 	// used for memset.
 #include <arpa/inet.h> 	// for inet_ntop function
 #include <netdb.h>
@@ -20,6 +21,31 @@
 #include <vector>
 #include <boost/asio.hpp>
 #include <libconfig.h++>
+
+#include <string>
+#include <iostream>
+#include <cstring> 	// used for memset.
+#include <arpa/inet.h> 	// for inet_ntop function
+#include <netdb.h>
+#include <sys/socket.h>
+#include <pthread.h>
+#include <vector>
+#include <list>
+#include <iterator>
+#include <sstream>
+#include <unistd.h>
+#include <errno.h>
+#include <thread>
+#include <mutex>
+#include "sys/i2c/i2cpacket.h"
+#include "sys/i2c/i2caddress.h"
+#include <libconfig.h++>
+#include <iostream>
+#include <iomanip>
+#include <type_traits>
+
+#include <cstdint>
+#include "./sys/i2c/i2cpacket.h"
 
 using boost::asio::ip::tcp;
 using namespace libconfig;
@@ -47,9 +73,7 @@ public:
 private:
   bool parsesuccess_;
   void parse() ;
-  
   void do_read();
-
   void do_write(bool success);
 
   tcp::socket socket_;

@@ -167,6 +167,28 @@ int main()
     }
 
 
+    
+    
+ //   printf ( "%s\n", result);
+    std::priority_queue<int> q;
+
+    for ( int n : {
+                1,8,5,6,3,4,0,9,3,2
+            } )
+        q.push ( n );
+
+    print_queue ( q );
+
+
+
+    std::priority_queue<int, std::vector<int>, std::greater<int> > q2;
+
+    for ( int n : {
+                1,8,5,6,3,4,0,9,3,2
+            } )
+        q2.push ( n );
+
+    print_queue ( q2 );
 
 // TODO - socket öffnen um Daten entgegen zu nehmen. Diese Daten per i2c über den Bus schicken.
 // TODO initialize the i2c-bus,
@@ -203,24 +225,4 @@ int main()
 
 
 
-//  //   printf ( "%s\n", result);
-//     std::priority_queue<int> q;
-//
-//     for ( int n : {
-//                 1,8,5,6,3,4,0,9,3,2
-//             } )
-//         q.push ( n );
-//
-//     print_queue ( q );
-//
-//
-//
-//     std::priority_queue<int, std::vector<int>, std::greater<int> > q2;
-//
-//     for ( int n : {
-//                 1,8,5,6,3,4,0,9,3,2
-//             } )
-//         q2.push ( n );
-//
-//     print_queue ( q2 );
 }

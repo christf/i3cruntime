@@ -90,6 +90,7 @@ public:
 
   //! for easy printing
   friend std::ostream& operator<< ( std::ostream &out, const I2CPacket &packet );
+//   friend operator< (const I2CPacket &packet);
 private:
   const uint16_t m_seqNo;
   const I2CAddress m_peer;

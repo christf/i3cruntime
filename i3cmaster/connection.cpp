@@ -1,92 +1,10 @@
 #include "connection.h"
 
 
-typedef std::uint64_t hash_t;
-constexpr hash_t prime = 0x100000001B3ull;
-constexpr hash_t basis = 0xCBF29CE484222325ull;
-
-// stolen from http://dev.krzaq.cc/switch-on-strings-with-c11/
-constexpr hash_t hash(char const* str, hash_t last_value = basis)
-{
-  return *str ? hash(str+1, (*str ^ last_value) * prime) : last_value;
-}
-constexpr unsigned long long operator "" _hash(char const* p, size_t)
-{
-  return hash(p);
-}
 using namespace i3c::sys::i2c;
 
-I2COperation strtoOp(std::string strop) {
 
-  switch(hash(strop.c_str())){
-    case "READ_SIMPLE"_hash:  return I2COperation::READ_SIMPLE;
-    case "WRITE_SIMPLE"_hash:  return I2COperation::WRITE_SIMPLE;
-    case "READ_REG_8"_hash: return I2COperation::READ_REG_8;
-    case "READ_REG_16"_hash: return I2COperation::READ_REG_16;
-    case "WRITE_REG_8"_hash: return I2COperation::WRITE_REG_8;
-    case "WRITE_REG_16"_hash: return I2COperation::WRITE_REG_16;
-  }
-}
-
-
-
-std::vector<I2CPacket> genpacket ( const std::string s_config )
-{
-
-    std::vector <I2CPacket> packets;
-
-
-    libconfig::Config cfg;
-
-
-    try {
-        cfg.readString ( s_config );
-    } catch ( libconfig::ParseException &pe ) {
-        std::cout << pe.what() << ": " <<  pe.getError() << " on line " << pe.getLine() << ": " << pe.getError() << std::endl;
-    }
-
-    try {
-        const libconfig::Setting& s_packets = cfg.getRoot() ["packets"];
-
-        const int count = s_packets.getLength();
-
-        for ( int i = 0; i < count; ++i ) {
-
-            I2COperation op;
-            int reg=0;
-            int data=0;
-            std::string strop;
-            int seqNo=0;
-            const libconfig::Setting &packet = s_packets[i];
-            int addressdata=0;
-            if ( ! ( packet.lookupValue ( "I2CAddress", addressdata )
-                     && packet.lookupValue ( "I2COperation", strop )
-// 	    && packet.lookupValue ( "Register", reg )
-                     && packet.lookupValue ( "Sequence", seqNo )
-                     && packet.lookupValue ( "Data", data )
-                   ) ) {
-                std::cout << "something broke" << std::endl;
-                continue;
-            }
-
-//             seqNo = configextract ( &cfg, "Sequence" );
-            I2CAddress peer ( addressdata );
-	    op = strtoOp(strop);
-	    if (   packet.lookupValue ( "Register", reg ) ) {
-// 	     std::cout << "hier drin" << reg << " op: " << strop << std::endl;
-                packets.push_back ( I2CPacket ( seqNo, peer, op, reg, data ) );
-            } else {
-// 	      std::cout << "da drin" << reg << " op: " << strop << std::endl;
-                packets.push_back ( I2CPacket ( seqNo, peer, op,  data ) );
-            }
-        }
-    } catch ( const libconfig::SettingNotFoundException &nfex ) {
-        std::cout << "parsing the string did not work. check the data for flaws." <<std::endl;
-    }
-    return packets;
-}
-
-
+/*
 Connection::Connection ( int fd, std::vector<Connection> *clist ) :m_server_fd ( fd ),m_clist(clist)
 {
     char ipstr[INET6_ADDRSTRLEN];
@@ -162,7 +80,7 @@ const void Connection::run ( )
         }
         }
 
-        pthread_mutex_unlock(&mutex_state);*/
+        pthread_mutex_unlock(&mutex_state);
 
 
     }
@@ -176,4 +94,4 @@ void  Connection::do_command ( std::vector<I2CPacket> packets ) // function that
     std::cout << *i << ' ';
   }
 }
-
+*/
