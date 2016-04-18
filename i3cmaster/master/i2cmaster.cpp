@@ -50,125 +50,138 @@ template<typename T> void print_queue ( T& q )
 #include <cstdlib>
 
 #include <iostream>
-#include <cstring>      // Needed for memset
-#include <sys/socket.h> // Needed for the socket functions
-#include <netdb.h>      // Needed for the socket functions
+// #include <cstring>      // Needed for memset
+// #include <sys/socket.h> // Needed for the socket functions
+// #include <netdb.h>      // Needed for the socket functions
 
 
-#include "../server.h"
+// #include "../server.h"
 #include "../master/i3cendpoint.h"
 using namespace libconfig;
 
 using namespace i3c::sys::i2c;
 
+#include <cstdlib>
+#include <iostream>
+#include <memory>
+#include <utility>
+#include <boost/asio.hpp>
 
-void sclient()
+using boost::asio::ip::tcp;
+
+class session
+  : public std::enable_shared_from_this<session>
 {
-    // socket client implementation taken from http://easy-tutorials.net/c/linux-c-socket-programming/
-    int status;
-    struct addrinfo host_info;       // The struct that getaddrinfo() fills up with data.
-    struct addrinfo *host_info_list; // Pointer to the to the linked list of host_info's.
+public:
+  session(tcp::socket socket)
+    : socket_(std::move(socket))
+  {
+  }
 
-    // The MAN page of getaddrinfo() states "All  the other fields in the structure pointed
-    // to by hints must contain either 0 or a null pointer, as appropriate." When a struct
-    // is created in C++, it will be given a block of memory. This memory is not necessary
-    // empty. Therefor we use the memset function to make sure all fields are NULL.
-    memset ( &host_info, 0, sizeof host_info );
+  void start()
+  {
+    do_read();
+  }
 
-    std::cout << "Setting up the structs..."  << std::endl;
+private:
+  bool parsesuccess_;
+  void parse() {
+        Config cfg;
+	try {
+	  cfg.readString(data_);
+	  const Setting &packets = cfg.getRoot()["packets"];
+	  int count = packets.getLength();
+	  cout << count << endl;
+	  
+	  parsesuccess_ = true;
+	}
+	catch ( const ParseException &pex ) {
+	  // const ParseException &pex 
+	  // const SettingNotFoundException &nfex )
+        std::cerr << "Parse error " << pex.what() << " while reading " << pex.getFile() << " on line: " << pex.getLine()
+                  << " - " << pex.getError() << std::endl;
+		  parsesuccess_ = false;
+	}
+	catch ( const SettingNotFoundException &nfex ) {
+	  parsesuccess_ = false;
+	}
+	
+  }
+  
+  void do_read()
+  {
+    auto self(shared_from_this());
+//     socket_.async_read_some(boost::asio::buffer(data_, max_length),
+//         [this, self](boost::system::error_code ec, std::size_t length)
+    socket_.async_read_some(boost::asio::buffer(data_, max_length),
+        [this, self](boost::system::error_code ec, std::size_t length)
+        {	  
+          if (!ec)
+          {
+	    parse();
+            do_write(parsesuccess_);
+          }
+        });
+  }
 
-    host_info.ai_family = AF_UNSPEC;     // IP version not specified. Can be both.
-    host_info.ai_socktype = SOCK_STREAM; // Use SOCK_STREAM for TCP or SOCK_DGRAM for UDP.
-
-    // Now fill up the linked list of host_info structs with google's address information.
-    status = getaddrinfo ( "www.google.com", "80", &host_info, &host_info_list );
-    // getaddrinfo returns 0 on succes, or some other value when an error occured.
-    // (translated into human readable text by the gai_gai_strerror function).
-    //       std::cout << status;
-    if ( status != 0 ) {
-        std::cout << "getaddrinfo error" << gai_strerror ( status )  << endl;
-    } else {
-        std::cout << "Creating a socket..."  << std::endl;
-        int socketfd ; // The socket descripter
-        socketfd = socket ( host_info_list->ai_family, host_info_list->ai_socktype,
-                            host_info_list->ai_protocol );
-        if ( socketfd == -1 ) {
-            std::cout << "socket error " ;
-        }
-
-        std::cout << "Connect()ing..."  << std::endl;
-        status = connect ( socketfd, host_info_list->ai_addr, host_info_list->ai_addrlen );
-        if ( status == -1 ) {
-            std::cout << "connect error" ;
-        }
-        std::cout << "send()ing message..."  << std::endl;
-        char msg[255] = "GET / HTTP/1.1\nhost: www.google.com\n\n";
-        int len;
-        ssize_t bytes_sent;
-        len = strlen ( msg );
-        bytes_sent = send ( socketfd, msg, len, 0 );
-        std::cout << "Waiting to recieve data..."  << std::endl;
-        ssize_t bytes_recieved;
-        char incoming_data_buffer[1000];
-        bytes_recieved = recv ( socketfd, incoming_data_buffer,1000, 0 );
-        // If no data arrives, the program will just wait here until some data arrives.
-        if ( bytes_recieved == 0 ) {
-            std::cout << "host shut down." << std::endl ;
-        }
-        if ( bytes_recieved == -1 ) {
-            std::cout << "recieve error!" << std::endl ;
-        }
-        std::cout << bytes_recieved << " bytes recieved :" << std::endl ;
-        std::cout << incoming_data_buffer << std::endl;
-        std::cout << "Receiving complete. Closing socket..." << std::endl;
-        freeaddrinfo ( host_info_list );
-        close ( socketfd );
+  void do_write(bool success)
+  {
+    int length = 3;
+    std::string data;
+    if (success)
+    {
+      data = "ACK";
     }
-}
+      else
+      {
+	data = "ERR";
+      }
+    auto self(shared_from_this());
+    boost::asio::async_write(socket_, boost::asio::buffer(data, length),
+        [this, self](boost::system::error_code ec, std::size_t /*length*/)
+        {
+          if (!ec)
+          {
+            do_read();
+          }
+        });
+  }
 
+  tcp::socket socket_;
+  enum { max_length = 1024 };
+  char data_[max_length];
+};
 
-
-int server_func ( int socketfd )
+class server
 {
-    int new_sd;
-    struct sockaddr_storage their_addr;
-    socklen_t addr_size = sizeof ( their_addr );
-    new_sd = accept ( socketfd, ( struct sockaddr * ) &their_addr, &addr_size );
-    if ( new_sd == -1 ) {
-        std::cout << "listen error" << std::endl ;
-    } else {
-        std::cout << "Connection accepted. Using new socketfd : "  <<  new_sd << std::endl;
-    }
+public:
+  server(boost::asio::io_service& io_service, short port)
+    : acceptor_(io_service, tcp::endpoint(tcp::v4(), port)),
+      socket_(io_service)
+  {
+    do_accept();
+  }
+
+private:
+  void do_accept()
+  {
+    acceptor_.async_accept(socket_,
+        [this](boost::system::error_code ec)
+        {
+          if (!ec)
+          {
+            std::make_shared<session>(std::move(socket_))->start();
+          }
+
+          do_accept();
+        });
+  }
+
+  tcp::acceptor acceptor_;
+  tcp::socket socket_;
+};
 
 
-    std::cout << "Waiting to recieve data..."  << std::endl;
-    ssize_t bytes_recieved;
-    char incomming_data_buffer[1000];
-    bytes_recieved = recv ( new_sd, incomming_data_buffer,1000, 0 );
-// If no data arrives, the program will just wait here until some data arrives.
-    if ( bytes_recieved == 0 ) {
-        std::cout << "host shut down." << std::endl ;
-    }
-    if ( bytes_recieved == -1 ) {
-        std::cout << "recieve error!" << std::endl ;
-    }
-    std::cout << bytes_recieved << " bytes recieved :" << std::endl ;
-    incomming_data_buffer[bytes_recieved] = '\0';
-    std::cout << incomming_data_buffer << std::endl;
-
-
-    std::cout << "send()ing back a message..."  << std::endl;
-    char msg[255] = "thank you.";
-    int len;
-    ssize_t bytes_sent;
-    len = strlen ( msg );
-    bytes_sent = send ( new_sd, msg, len, 0 );
-
-    std::cout << "Stopping server..." << std::endl;
-
-    close ( new_sd );
-    close ( socketfd );
-}
 
 
 int main()
@@ -188,20 +201,20 @@ int main()
         return ( EXIT_FAILURE );
     }
 
-    // Get the store name.
+    // Get the name of the server endpoint
     try {
         string name = cfg.lookup ( "name" );
         cout << "Bus name: " << name << endl << endl;
     } catch ( const SettingNotFoundException &nfex ) {
         cerr << "No 'name' setting in configuration file." << endl;
     }
-    // Get the store name.
+    // Get the port of the i2c server
     try {
         i2cport = ( int ) cfg.lookup ( "i2cport" );
     } catch ( const SettingNotFoundException &nfex ) {
         cerr << "No 'i2cport' setting in configuration file." << endl;
     }
-    // Get the store name.
+    // which i2c-device are we on?
     string bus;
     try {
         string busdev = cfg.lookup ( "bus" );
@@ -295,19 +308,36 @@ int main()
 // TODO initialize the i2c-bus,
 
 
-    std::cout << " ========= server =========" << endl;
-    Server serv ( i2cport );
-    serv.run();
+  try
+  {
+    boost::asio::io_service io_service;
 
-    // TODO all of the below should be handled inside a connection.
-    uint8_t destination = 0x21;
-    uint8_t data = 0xaa;
-    I3CPacket p ( data ,destination, ODD, ST_START );
+    server s(io_service, i2cport);
 
-    cout << p << endl;
+    io_service.run();
+  }
+  catch (std::exception& e)
+  {
+    std::cerr << "Exception: " << e.what() << "\n";
+  }
+
+      return ( EXIT_SUCCESS );
+  
+  
+  
+//     std::cout << " ========= server =========" << endl;
+//     Server serv ( i2cport );
+//     serv.run();
+// 
+//     // TODO all of the below should be handled inside a connection.
+//     uint8_t destination = 0x21;
+//     uint8_t data = 0xaa;
+//     I3CPacket p ( data ,destination, ODD, ST_START );
+// 
+//     cout << p << endl;
 
 
-    return ( EXIT_SUCCESS );
+
 
 //  //   printf ( "%s\n", result);
 //     std::priority_queue<int> q;
