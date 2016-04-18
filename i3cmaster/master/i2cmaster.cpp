@@ -9,27 +9,22 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "i3c_master.h"
-
 #include <unistd.h>
-
-
 #include <string.h>
-
 #include <iostream>
-// #include "slave.h"
-// #include "i3c_commhandler.h"
-
 #include "i3cpacket.h"
-
-
 #include <functional>
 #include <queue>
 #include <vector>
-#include <iostream>
 #include "operation.h"
 #include "../api/i3c.h"
-
 #include <libconfig.h++>
+#include "../debug.h"
+#include <iomanip>
+#include <cstdlib>
+#include <memory>
+#include <utility>
+#include "../server.h"
 
 using namespace std;
 
@@ -44,142 +39,11 @@ template<typename T> void print_queue ( T& q )
     std::cout << '\n';
 }
 
-#include "../debug.h"
-#include <iostream>
-#include <iomanip>
-#include <cstdlib>
-
-#include <iostream>
-// #include <cstring>      // Needed for memset
-// #include <sys/socket.h> // Needed for the socket functions
-// #include <netdb.h>      // Needed for the socket functions
-
-
-// #include "../server.h"
 #include "../master/i3cendpoint.h"
-using namespace libconfig;
+
 
 using namespace i3c::sys::i2c;
 
-#include <cstdlib>
-#include <iostream>
-#include <memory>
-#include <utility>
-#include <boost/asio.hpp>
-
-using boost::asio::ip::tcp;
-
-class session
-  : public std::enable_shared_from_this<session>
-{
-public:
-  session(tcp::socket socket)
-    : socket_(std::move(socket))
-  {
-  }
-
-  void start()
-  {
-    do_read();
-  }
-
-private:
-  bool parsesuccess_;
-  void parse() {
-        Config cfg;
-	try {
-	  cfg.readString(data_);
-	  const Setting &packets = cfg.getRoot()["packets"];
-	  int count = packets.getLength();
-	  cout << count << endl;
-	  
-	  parsesuccess_ = true;
-	}
-	catch ( const ParseException &pex ) {
-	  // const ParseException &pex 
-	  // const SettingNotFoundException &nfex )
-        std::cerr << "Parse error " << pex.what() << " while reading " << pex.getFile() << " on line: " << pex.getLine()
-                  << " - " << pex.getError() << std::endl;
-		  parsesuccess_ = false;
-	}
-	catch ( const SettingNotFoundException &nfex ) {
-	  parsesuccess_ = false;
-	}
-	
-  }
-  
-  void do_read()
-  {
-    auto self(shared_from_this());
-//     socket_.async_read_some(boost::asio::buffer(data_, max_length),
-//         [this, self](boost::system::error_code ec, std::size_t length)
-    socket_.async_read_some(boost::asio::buffer(data_, max_length),
-        [this, self](boost::system::error_code ec, std::size_t length)
-        {	  
-          if (!ec)
-          {
-	    parse();
-            do_write(parsesuccess_);
-          }
-        });
-  }
-
-  void do_write(bool success)
-  {
-    int length = 3;
-    std::string data;
-    if (success)
-    {
-      data = "ACK";
-    }
-      else
-      {
-	data = "ERR";
-      }
-    auto self(shared_from_this());
-    boost::asio::async_write(socket_, boost::asio::buffer(data, length),
-        [this, self](boost::system::error_code ec, std::size_t /*length*/)
-        {
-          if (!ec)
-          {
-            do_read();
-          }
-        });
-  }
-
-  tcp::socket socket_;
-  enum { max_length = 1024 };
-  char data_[max_length];
-};
-
-class server
-{
-public:
-  server(boost::asio::io_service& io_service, short port)
-    : acceptor_(io_service, tcp::endpoint(tcp::v4(), port)),
-      socket_(io_service)
-  {
-    do_accept();
-  }
-
-private:
-  void do_accept()
-  {
-    acceptor_.async_accept(socket_,
-        [this](boost::system::error_code ec)
-        {
-          if (!ec)
-          {
-            std::make_shared<session>(std::move(socket_))->start();
-          }
-
-          do_accept();
-        });
-  }
-
-  tcp::acceptor acceptor_;
-  tcp::socket socket_;
-};
 
 
 
@@ -312,7 +176,7 @@ int main()
   {
     boost::asio::io_service io_service;
 
-    server s(io_service, i2cport);
+    Server s(io_service, i2cport);
 
     io_service.run();
   }

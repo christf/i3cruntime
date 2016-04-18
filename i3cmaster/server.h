@@ -18,23 +18,45 @@
 #include <mutex>
 #include "connection.h"
 #include <vector>
+#include <boost/asio.hpp>
+#include <libconfig.h++>
+
+using boost::asio::ip::tcp;
+using namespace libconfig;
 
 class Server
 {
-        const int MAXFD = 10;
-//   const int MAXLEN = 1024;
-private:
-
-        void do_command ( char * command, int fd );
-        int m_server_fd;
-        volatile fd_set the_state;
-        static std::mutex assignconnection;
-std::vector<Connection> connections;
 public:
-        Server ( int tcp_port );
-        void run();
-        int send ( Connection connection, uint16_t data );
-
+  Server(boost::asio::io_service& io_service, short port);
+  
+private:
+  void do_accept();
+  tcp::acceptor acceptor_;
+  tcp::socket socket_;
 };
+
+
+
+class Session
+  : public std::enable_shared_from_this<Session>
+{
+public:
+  Session(tcp::socket socket);
+  void start();
+
+private:
+  bool parsesuccess_;
+  void parse() ;
+  
+  void do_read();
+
+  void do_write(bool success);
+
+  tcp::socket socket_;
+  enum { max_length = 1024 };
+  char data_[max_length];
+};
+
+
 
 #endif
