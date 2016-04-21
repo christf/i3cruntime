@@ -124,6 +124,7 @@ std::vector<i3c::sys::i2c::I2CPacket> genpacket ( const std::string s_config )
 
   void Session::parse() {
     genpacket(data_);
+    // TODO: Do something useful with the packet. like adding it to some global priority queue...
     
 //         Config cfg;
 // 	try {

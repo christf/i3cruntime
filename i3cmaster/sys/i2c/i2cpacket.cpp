@@ -24,7 +24,7 @@ I2CPacket::I2CPacket(const uint16_t seqNo,
 		     const I2CAddress peer,
 		     const I2COperation op,
 	             const uint16_t data) throw(std::invalid_argument)
-: m_seqNo(seqNo), m_peer(peer), m_op(op), m_reg(0), m_data(data)
+: m_seqNo(seqNo), m_peer(peer), m_op(op), m_reg(0), m_data(data), m_priority(5)
 {
   if ( (op != I2COperation::READ_SIMPLE) &&
        (op != I2COperation::WRITE_SIMPLE) )
@@ -40,7 +40,8 @@ I2CPacket::I2CPacket(const uint16_t seqNo,
   m_peer(peer),
   m_op(op),
   m_reg(reg),
-  m_data(data)
+  m_data(data),
+  m_priority(5)
 {
   if ( (op == I2COperation::READ_SIMPLE) ||
        (op == I2COperation::WRITE_SIMPLE) )
@@ -52,11 +53,15 @@ I2CPacket::I2CPacket(const I2CPacket& other, const uint16_t data) throw()
   m_peer(other.m_peer),
   m_op(other.m_op),
   m_reg(other.m_reg),
-  m_data(data)
+  m_data(data),
+  m_priority(5)
 {
 }
 
 // #include <hex>
+
+
+// TODO: initialize m_priority!
 
 std::ostream& operator<< ( std::ostream &out, const I2CPacket &packet )
 {
@@ -77,12 +82,24 @@ std::ostream& operator<< ( std::ostream &out, const I2CPacket &packet )
   return out;
 }
 
+bool operator< (const I2CPacket& lhs, const I2CPacket& rhs)
+{
+  return lhs.getprio() < rhs.getprio();
+}
+
+const uint8_t I2CPacket::getprio() const
+{
+return m_priority;
+}
+
+
 I2CPacket::I2CPacket(const I2CPacket &other) throw()
 : m_seqNo(other.m_seqNo),
   m_peer(other.m_peer),
   m_op(other.m_op),
   m_reg(other.m_reg),
-  m_data(other.m_data)
+  m_data(other.m_data),
+  m_priority(5)
 {}
 
 const uint16_t I2CPacket::seqNo() const throw()

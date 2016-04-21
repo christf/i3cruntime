@@ -88,10 +88,13 @@ public:
   //! The 16 bit data sent over the I2C bus.
   const uint16_t data() const throw();
 
+  const uint8_t getprio() const;
+  
   //! for easy printing
   friend std::ostream& operator<< ( std::ostream &out, const I2CPacket &packet );
-//   friend operator< (const I2CPacket &packet);
+  bool operator< (const I2CPacket& other);
 private:
+  const uint8_t m_priority;
   const uint16_t m_seqNo;
   const I2CAddress m_peer;
   const I2COperation m_op;
