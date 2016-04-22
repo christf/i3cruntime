@@ -25,12 +25,7 @@ uint8_t I3CPacket::getMeta() const
     return meta;
 }
 
-
-
-
-
-
-I3CPacket::I3CPacket ( const I2CAddress source, const uint16_t data ) throw ( std::runtime_error )
+I3CPacket::I3CPacket ( const I2CAddress source, const uint16_t data ) throw ( std::invalid_argument )
 : m_data( (uint8_t)( data & 0x00FF ) ),
   m_destination(source),
   m_packetcount( static_cast<packetcounter>(data>> 15) ),
@@ -43,8 +38,28 @@ I3CPacket::I3CPacket ( const I2CAddress source, const uint16_t data ) throw ( st
     {
       std::stringstream ss;
       ss << this << "calculated crc: " << calc_crc();
-      throw std::runtime_error(std::string("CRC from the input value does not match the data: ") + ss.str());
+      throw std::invalid_argument(std::string("CRC from the input value does not match the data: ") + ss.str());
     }
+}
+
+const uint8_t I3CPacket::getData() const noexcept
+{
+  return m_data;
+}
+
+const I2CAddress& I3CPacket::getDestination() const noexcept
+{
+  return m_destination;
+}
+
+const packetcounter I3CPacket::getCounter() const noexcept
+{
+  return m_packetcount;
+}
+
+const i3c_packet_state I3CPacket::getState() const noexcept
+{
+  return m_status;
 }
 
 uint8_t I3CPacket::calc_crc() const

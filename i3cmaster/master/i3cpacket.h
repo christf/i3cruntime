@@ -32,13 +32,22 @@ public:
 	 * This will fail if the crc does not match.
 	 */
         I3CPacket ( const I2CAddress source,
-		    const uint16_t data ) throw (std::runtime_error);
+		    const uint16_t data ) throw (std::invalid_argument);
+
+	const uint8_t getData() const noexcept;
+
+	const I2CAddress& getDestination() const noexcept;
+
+	const packetcounter getCounter() const noexcept;
+
+	const i3c_packet_state getState() const noexcept;
 
 	//! render this packet such that its contents are part of an i2c-packet
         I2CPacket render();
 
 	//! for easy printing
         friend std::ostream& operator<< ( std::ostream &out, const I3CPacket &packet );
+
 
 
 private:
