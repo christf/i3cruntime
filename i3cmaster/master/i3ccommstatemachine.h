@@ -4,12 +4,12 @@
  */
 
 #include <stdexcept>
+#include <memory>
 #include <vector>
 
 #include "operation.h"
+#include "i3cpacket.h"
 #include "../sys/i2c/i2cpacket.h"
-
-using i3c::sys::i2c::I2CPacket;
 
 namespace i3c {
 namespace master {
@@ -30,27 +30,42 @@ public:
 	//! The communication has failed and cannot be recovered
 	FAILED
     };
+
 public:
     //! Initialize the state machine with an operation
-    I3CCommStateMachine(const Operation m_operation);
+    I3CCommStateMachine(const I2CAddress& p_peer,
+			const Operation& p_operation) noexcept;
+
+    ~I3CCommStateMachine() noexcept = default;
 
     //! get the current state
-    const CommState state() const throw();
-
-    //! get the response. Throws an exception if the state is not FINISHED
-    const std::vector<uint8_t>& response() const throw(std::exception);
-
-    //! get the error. Returns 0 if there is no error, check state for FAILED
-    uint8_t error() const throw();
+    const CommState getState() const noexcept;
 
     //! return the packet counter, i.e. the total number of packets sent/received
-    uint8_t packetCount() const throw();
+    uint16_t getPacketCount() const throw();
+
+    //! get the response. Throws an exception if the state is not FINISHED
+    const std::vector<uint8_t>& getResponse() const throw(std::exception);
+
+    //! get the error. Returns 0 if there is no error, check state for FAILED
+    uint8_t getError() const noexcept;
 
     //! get the next I2C request
-    I2CPacket nextI2cRequest() throw();
+    std::shared_ptr<i3c::sys::i2c::I2CPacket> nextI2cRequest() throw(std::logic_error);
 
     //! process the I2C response
-    void processI2cResponse(const I2CPacket packet) throw();
+    void processI2cResponse(const i3c::sys::i2c::I2CPacket packet) throw(std::logic_error);
+
+private:
+    const I2CAddress m_peer;
+    const Operation m_operation;
+
+private:
+    uint16_t m_packetCounter;
+    CommState m_state;
+    std::shared_ptr<i3c::sys::i2c::I2CPacket> m_lastPacket;
+    std::shared_ptr<i3c::sys::i2c::I2CPacket> m_nextPacket;
+    uint8_t m_frameProgress;
 };
 
 } // namespace master
