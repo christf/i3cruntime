@@ -30,6 +30,7 @@ include_directories( ${Boost_INCLUDE_DIR} )
 add_executable(i3cmaster
 debug.cpp
 master/i3cmaster.cpp
+master/i3ccommstatemachine.cpp
 platform/dummy/i2cendpoint_dummy.cpp
 master/i3cpacket.cpp
 sys/i2c/i2cpacket.cpp
@@ -47,6 +48,7 @@ ${WIRINGPI_FILES}
 add_executable(i2cmaster
 # debug.cpp
 master/i2cmaster.cpp
+master/i3ccommstatemachine.cpp
 platform/dummy/i2cendpoint_dummy.cpp
 sys/i2c/i2cpacket.cpp
 sys/i2c/i2cdispatcher.cpp
