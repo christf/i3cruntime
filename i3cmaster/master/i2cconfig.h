@@ -20,6 +20,5 @@ private:
   std::string m_name;
   std::string m_bus;
   
-  // TODO: wie legt man nun eine queue von mehreren i3cendpoints an?
-     std::deque<i3c::master::I3CEndpoint> m_i3cendpoints;
+  std::deque<std::weak_ptr<i3c::master::I3CEndpoint> > m_i3cendpoints;
 };
