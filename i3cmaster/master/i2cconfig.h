@@ -20,5 +20,5 @@ private:
   std::string m_name;
   std::string m_bus;
   
-  std::deque<std::shared_ptr<const i3c::master::I3CEndpoint> > m_i3cendpoints;
+  std::deque<std::shared_ptr<const i3c::master::I3CEndpoint>> m_i3cendpoints;
 };

@@ -32,7 +32,7 @@
 	const i3c::sys::i2c::I2CAddress adr ( address );
 
 	const i3c::master::I3CEndpoint ep ( adr,eprio )  ;
-	std::shared_ptr<const i3c::master::I3CEndpoint> epp(ep);
+	std::shared_ptr<const i3c::master::I3CEndpoint> epp = std::make_shared<const i3c::master::I3CEndpoint>(ep);
 	m_i3cendpoints.insert( epp );
       }
     } catch ( const FileIOException &fioex ) {
