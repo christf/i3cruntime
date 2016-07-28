@@ -32,8 +32,8 @@
 	const i3c::sys::i2c::I2CAddress adr ( address );
 
 	const i3c::master::I3CEndpoint ep ( adr,eprio )  ;
-	m_i3cendpoints.push_back(ep);
-// 	m_i3cendpoints.insert<i3c::master::I3CEndpoint>( ep);
+	std::shared_ptr<const i3c::master::I3CEndpoint> epp(ep);
+	m_i3cendpoints.insert( epp );
       }
     } catch ( const FileIOException &fioex ) {
         std::cerr << "I/O error while reading file." << std::endl;
