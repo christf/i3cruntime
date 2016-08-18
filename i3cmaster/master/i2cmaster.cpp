@@ -51,33 +51,15 @@ template<typename T> void print_queue ( T& q )
 int main()
 {
   I2CMConfig i2cconfig("i2cmaster.cfg");
-// cout << i2cconfig.getBus() << i2cconfig.getName() << i2cconfig.getport() << endl;
-
-// print_queue(i2cconfig.getEndpoints());
-    
-    std::deque<int> q;
-
-    for ( int n : {
-                1,8,5,6,3,4,0,9,3,2
-            } )
-        q.push_back ( n );
-
-    while ( !q.empty() ) {
-        std::cout << q.at(0) << " ";
-         q.pop_front();
-    }
-    std::cout << '\n';
-
-
-// TODO - socket öffnen um Daten entgegen zu nehmen. Diese Daten per i2c über den Bus schicken.
-// TODO initialize the i2c-bus,
-
+  cout << "Using device " << i2cconfig.getBus() << ", Using i2c name " << i2cconfig.getName() << ", Accepting Connections on Port " << i2cconfig.getport() << endl;
+// TODO: i2c-Bus initialisieren
+// TODO: empfangene Daten über den i2c-Bus schicken
 
   try
   {
     boost::asio::io_service io_service;
-
-    Server s(io_service, i2cconfig.getport());
+  shared_ptr<std::deque<std::shared_ptr<i3c::sys::i2c::I2CPacket>>> packetqueue;
+    Server s(io_service, i2cconfig.getport(), packetqueue);
 
     io_service.run();
   }
@@ -86,10 +68,13 @@ int main()
     std::cerr << "Exception: " << e.what() << "\n";
   }
 
-      return ( EXIT_SUCCESS );
-  
-  
-  
+      
+  // while (true) {
+  //  
+ // }
+  cout << "jo" << endl;
+     return ( EXIT_SUCCESS );
+   
 //     std::cout << " ========= server =========" << endl;
 //     Server serv ( i2cport );
 //     serv.run();

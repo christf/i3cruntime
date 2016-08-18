@@ -2,8 +2,8 @@
 
 
 
-  Server::Server(boost::asio::io_service& io_service, short port)
-    : acceptor_(io_service, tcp::endpoint(tcp::v4(), port)),
+  Server::Server(boost::asio::io_service& io_service, short port,  std::shared_ptr<std::deque<std::shared_ptr<i3c::sys::i2c::I2CPacket>>> packetqueue)
+    : acceptor_(io_service, tcp::endpoint(tcp::v4(), port)), m_queue(packetqueue), 
       socket_(io_service)
   {
     do_accept();
@@ -17,7 +17,7 @@
         {
           if (!ec)
           {
-            std::make_shared<Session>(std::move(socket_))->start();
+            std::make_shared<Session>(std::move(socket_),m_queue)->start();
           }
 
           do_accept();
@@ -27,8 +27,8 @@
   
 
 
-  Session::Session(tcp::socket socket)
-    : socket_(std::move(socket))
+  Session::Session(tcp::socket socket,std::shared_ptr<std::deque<std::shared_ptr<i3c::sys::i2c::I2CPacket>>> queuepointer)
+    : socket_(std::move(socket)),m_queue(queuepointer)
   {
   }
 
@@ -123,8 +123,21 @@ std::vector<i3c::sys::i2c::I2CPacket> genpacket ( const std::string s_config )
 }
 
   void Session::parse() {
-    genpacket(data_);
-    // TODO: Do something useful with the packet. like adding it to some global priority queue...
+    std::vector<i3c::sys::i2c::I2CPacket> packets = genpacket(data_);
+    std::cout << "successfully interpreted packet data" << std::endl;
+    
+    
+
+for (std::vector<i3c::sys::i2c::I2CPacket>::iterator it = packets.begin(); it != packets.end(); it++)
+{
+  // TODO: deque is not thread safe so this should probably be protected
+  // TODO: also this really should not be commented.... :-P
+  //  (*m_queue).push_back(std::make_shared(packets.at(it)));
+}
+
+
+ 
+    // TODO: Do something useful with the packet.
     
 //         Config cfg;
 // 	try {

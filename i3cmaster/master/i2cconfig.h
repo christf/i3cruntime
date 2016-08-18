@@ -15,6 +15,7 @@ public:
   uint16_t getport();
   string getName();
   string getBus();
+  std::deque<std::shared_ptr<i3c::master::I3CEndpoint>> getEndpoints();
 private:
   uint16_t m_i2cport;
   std::string m_name;

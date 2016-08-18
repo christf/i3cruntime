@@ -4,7 +4,7 @@
     libconfig::Config cfg;
     // Read the file. If there is an error, report it and exit.
     try {
-        cfg.readFile ( "i2cmaster.cfg" );
+        cfg.readFile ( filename.c_str() );
 
         m_i2cport  = (int)cfg.lookup ( "i2cport");
 	cfg.lookupValue ( "name", m_name );
@@ -31,19 +31,20 @@
 	eprio = i3c::master::stringToEnum ( prio );
 	const i3c::sys::i2c::I2CAddress adr ( address );
 
-	 
-	std::shared_ptr<i3c::master::I3CEndpoint> epp = std::make_shared<i3c::master::I3CEndpoint> ( adr,eprio ) ;
-	m_i3cendpoints.push_back( epp );
+	m_i3cendpoints.push_back( std::make_shared<i3c::master::I3CEndpoint> ( adr,eprio ) );
       }
     } catch ( const FileIOException &fioex ) {
-        std::cerr << "I/O error while reading file." << std::endl;
+        std::cerr << "I/O error while reading file." << filename << std::endl;
+	throw;
     } catch ( const ParseException &pex ) {
         std::cerr << "Parse error " << pex.what() << " while reading " << pex.getFile() << " on line: " << pex.getLine()
                   << " - " << pex.getError() << std::endl;
+		  throw;
     } catch ( const SettingNotFoundException &nfex ) {
       cerr << "error while parsing the config file" << endl;
       nfex.what();
       nfex.getPath();
+      throw;
     }
   }
   
@@ -56,3 +57,8 @@
   uint16_t I2CMConfig::getport() {
     return m_i2cport;
   }
+ 
+deque< shared_ptr< i3c::master::I3CEndpoint > > I2CMConfig::getEndpoints()
+{
+return m_i3cendpoints;
+}
