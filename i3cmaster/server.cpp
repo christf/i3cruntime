@@ -122,12 +122,9 @@ std::vector<i3c::sys::i2c::I2CPacket> genpacket ( const std::string s_config )
 }
 
   void Session::parse() {
-    std::vector<i3c::sys::i2c::I2CPacket> packets = genpacket(data_);
-    std::cout << "successfully interpreted packet data" << std::endl;
-
-    for (auto i: packets) { 
+    for (auto i: genpacket(data_)) { 
          m_queue.push_back(std::make_shared<i3c::sys::i2c::I2CPacket>(i));
-	 std::cout << "added i2cpacket to working queue" << std::endl;
+	 std::cout << "added i2cpacket to working queue: " <<  i << std::endl;
     }
   }
   

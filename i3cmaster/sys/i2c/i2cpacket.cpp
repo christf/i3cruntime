@@ -74,7 +74,7 @@ std::ostream& operator<< ( std::ostream &out, const I2CPacket &packet )
 
 
   out << "[ destination: " << std::hex << unsigned ( packet.m_peer )  << "(" << bdest << ") sequenz: "  << unsigned ( packet.m_seqNo ) <<
-  " (" << bseq << ") data: " << unsigned ( packet.m_data ) << "(" << bdata  << ") register; " << unsigned(packet.m_reg ) << " (" << breg <<  ") operation: " << (int)packet.m_op << ") ]" << std::endl;
+  " (" << bseq << ") data: " << unsigned ( packet.m_data ) << "(" << bdata  << ") register; " << unsigned(packet.m_reg ) << " (" << breg <<  ") operation: " << (int)packet.m_op << ") ]" ;
   return out;
 }
 
