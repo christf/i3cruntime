@@ -2,7 +2,7 @@
 
 
 
-  Server::Server(boost::asio::io_service& io_service, short port,  std::shared_ptr<std::deque<std::shared_ptr<i3c::sys::i2c::I2CPacket>>> packetqueue)
+  Server::Server(boost::asio::io_service& io_service, short port,  std::deque<std::shared_ptr<i3c::sys::i2c::I2CPacket>> packetqueue)
     : acceptor_(io_service, tcp::endpoint(tcp::v4(), port)), m_queue(packetqueue), 
       socket_(io_service)
   {
@@ -27,8 +27,8 @@
   
 
 
-  Session::Session(tcp::socket socket,std::shared_ptr<std::deque<std::shared_ptr<i3c::sys::i2c::I2CPacket>>> queuepointer)
-    : socket_(std::move(socket)),m_queue(queuepointer)
+  Session::Session(tcp::socket socket,std::deque<std::shared_ptr<i3c::sys::i2c::I2CPacket>> queue)
+    : socket_(std::move(socket)),m_queue(queue)
   {
   }
 
@@ -68,7 +68,6 @@ i3c::sys::i2c::I2COperation strtoOp(std::string strop) {
 
 std::vector<i3c::sys::i2c::I2CPacket> genpacket ( const std::string s_config )
 {
-
     std::vector <i3c::sys::i2c::I2CPacket> packets;
 
 
@@ -125,73 +124,11 @@ std::vector<i3c::sys::i2c::I2CPacket> genpacket ( const std::string s_config )
   void Session::parse() {
     std::vector<i3c::sys::i2c::I2CPacket> packets = genpacket(data_);
     std::cout << "successfully interpreted packet data" << std::endl;
-    
-    
 
-for (std::vector<i3c::sys::i2c::I2CPacket>::iterator it = packets.begin(); it != packets.end(); it++)
-{
-  // TODO: deque is not thread safe so this should probably be protected
-  // TODO: also this really should not be commented.... :-P
-  //  (*m_queue).push_back(std::make_shared(packets.at(it)));
-}
-
-
- 
-    // TODO: Do something useful with the packet.
-    
-//         Config cfg;
-// 	try {
-// 	  cfg.readString(data_);
-// 	  const Setting &packets = cfg.getRoot()["packets"];
-// 	  int count = packets.getLength();
-// 	  
-//       for ( int i = 0; i < count; ++i ) {
-// 	const Setting &packet = packets[i]; 
-// 	//TODO: adapt this to an actual i2cpacket
-// 	
-// 	// Only output the record if all of the expected fields are present.
-// 	std::string name ;
-// 	//      uint8_t address;
-// 	int address;
-// 	int seq;
-// 	uint16_t data;
-// 	std::string op;
-// 	enum i3c::sys::i2c::I2COperation i2cop;
-// // 	enum i3c::master::endpoint_priority eprio;
-// 	if ( ! ( packet.lookupValue ( "Sequence", seq )
-// 	  && packet.lookupValue ( "I2CAddress", address )
-// 	  && packet.lookupValue ( "I2COperation", op )
-// 	) ) {
-// 	  continue;
-// 	}
-// // 	eprio = strtoOp ( prio );
-// 	const i3c::sys::i2c::I2CAddress adr ( address );
-	
-// 	const i3c::sys::i2c::I2CPacket i2cpacket(seq, adr,op, data);
-// 	const i3c::master::I3CEndpoint ep ( adr,eprio )  ;
-// 	cout << setw ( 30 ) << left << name << "  "
-// 	<< setw ( 10 ) << left << address << "  "
-// 	<< setw ( 6 ) << left << unsigned ( eprio ) << "  "
-// 	<< endl;
-
-	
-//       }
-// // 	  cout << count << endl;
-// 	  
-// 	  parsesuccess_ = true;
-// 	  // TODO: wie kommen diese PAkete nun in die priorityqueue, deren Inhalt auf den I2C-Bus gelegt wird?
-// // 	}
-// 	catch ( const ParseException &pex ) {
-// 	  // const ParseException &pex 
-// 	  // const SettingNotFoundException &nfex )
-//         std::cerr << "Parse error " << pex.what() << " while reading " << pex.getFile() << " on line: " << pex.getLine()
-//                   << " - " << pex.getError() << std::endl;
-// 		  parsesuccess_ = false;
-// 	}
-// 	catch ( const SettingNotFoundException &nfex ) {
-// 	  parsesuccess_ = false;
-// 	}
-	
+    for (auto i: packets) { 
+         m_queue.push_back(std::make_shared<i3c::sys::i2c::I2CPacket>(i));
+	 std::cout << "added i2cpacket to working queue" << std::endl;
+    }
   }
   
   void Session::do_read()

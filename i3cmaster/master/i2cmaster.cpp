@@ -58,7 +58,7 @@ int main()
   try
   {
     boost::asio::io_service io_service;
-  shared_ptr<std::deque<std::shared_ptr<i3c::sys::i2c::I2CPacket>>> packetqueue;
+  std::deque<std::shared_ptr<i3c::sys::i2c::I2CPacket>> packetqueue;
     Server s(io_service, i2cconfig.getport(), packetqueue);
 
     io_service.run();
