@@ -8,8 +8,8 @@
 #include "../sys/i2c/i2cpacket.h"
 #include <sstream>
 
-using namespace i3c::sys::i2c;
 
+using namespace i2c::sys;
 class I3CPacket
 {
 private:

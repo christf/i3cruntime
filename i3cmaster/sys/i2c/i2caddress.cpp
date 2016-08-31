@@ -22,9 +22,8 @@
 
 
 
-namespace i3c {
-namespace sys {
 namespace i2c {
+namespace sys {
 
 
 I2CAddress::I2CAddress ( const uint8_t address ) throw ( std::out_of_range )
@@ -75,6 +74,5 @@ void I2CAddress::range_check(const uint8_t address) throw (std::out_of_range)
   }
 }
 
-} // namespace i2c
 } // namespace sys
-} // namespace i3c
+} // namespace i2c

@@ -17,9 +17,9 @@
 
 #include "../../sys/i2c/i2cendpoint.h"
 
-using namespace i3c::sys::i2c;
 
-namespace i3c {
+
+namespace i2c {
 namespace platform {
 namespace rpi {
 

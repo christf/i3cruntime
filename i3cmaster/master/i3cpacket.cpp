@@ -1,6 +1,6 @@
 #include "i3cpacket.h"
 
-using namespace i3c::sys::i2c;
+using namespace i2c::sys;
 
 I3CPacket::I3CPacket ( const uint8_t data,
 		       const I2CAddress destination,

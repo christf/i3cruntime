@@ -22,9 +22,8 @@
 #include <memory>
 #include <vector>
 
-namespace i3c {
-namespace sys {
 namespace i2c {
+namespace sys {
 
 //! Store and manage a cache of already established I2C endpoints
 class I2CEndpointBroker
@@ -39,6 +38,5 @@ public:
 	virtual std::vector<I2CAddress>&& scan() throw (I2CEndpointException) = 0;
 };
 
-} // namespace i2c
 } // namespace sys
-} // namespace i3c
+} // namespace i2c

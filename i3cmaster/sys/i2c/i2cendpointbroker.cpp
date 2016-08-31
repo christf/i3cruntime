@@ -15,13 +15,11 @@
 
 #include "i2cendpointbroker.h"
 
-namespace i3c {
-namespace sys {
 namespace i2c {
+namespace sys {
 
 I2CEndpointBroker::~I2CEndpointBroker()
 {}
 
-} // namespace i2c
 } // namespace sys
-} // namespace i3c
+} // namespace i2c

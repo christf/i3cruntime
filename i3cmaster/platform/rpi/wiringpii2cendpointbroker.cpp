@@ -27,8 +27,9 @@
 
 
 using namespace i3c::sys::i2c;
+using namespace i2c::platform::rpi;
 
-namespace i3c {
+namespace i2c {
 namespace platform {
 namespace rpi {
 
@@ -113,4 +114,4 @@ std::vector< I2CAddress >&& WiringPiI2CEndpointBroker::scan() throw (I2CEndpoint
 
 } // namespace rpi
 } // namespace platform
-} // namespace i3c
+} // namespace i2c

@@ -1,7 +1,7 @@
 #include "server.h"
 #include "sys/i2c/i2cdispatcher.h"
 #include "platform/rpi/wiringpii2cendpointbroker.h"
-using namespace i3c::sys::i2c;
+using namespace i2c::sys;
 
   Server::Server(boost::asio::io_service& io_service, short port,  std::deque<std::shared_ptr<i3c::sys::i2c::I2CPacket>> packetqueue)
     : acceptor_(io_service, tcp::endpoint(tcp::v4(), port)), m_queue(packetqueue), socket_(io_service)
@@ -16,7 +16,7 @@ using namespace i3c::sys::i2c;
   
     // TODO - hier weitermachen: dispatcher sauber instanziieren.
   
-    I2CDispatcher dispatcher( std::make_shared<i3c::platform::rpi::WiringPiI2CEndpointBroker>(i2cEndpointBroker));
+ //   I2CDispatcher dispatcher( std::make_shared<i3c::platform::rpi::WiringPiI2CEndpointBroker>(i2cEndpointBroker));
     do_accept();
   }
 
@@ -77,7 +77,7 @@ i3c::sys::i2c::I2COperation strtoOp(std::string strop) {
 
 
 
-std::vector<i3c::sys::i2c::I2CPacket> genpacket ( const std::string s_config )
+std::vector<i2c::sys::I2CPacket> genpacket ( const std::string s_config )
 {
     std::vector <i3c::sys::i2c::I2CPacket> packets;
 

@@ -23,9 +23,8 @@
 #include <iostream>
 #include <bitset>
 
-namespace i3c {
-namespace sys {
 namespace i2c {
+namespace sys {
 
 //! I2C bus operations
 enum class I2COperation {
@@ -102,4 +101,3 @@ private:
 
 } // namespace i2c
 } // namespace sys
-} // namespace i3c

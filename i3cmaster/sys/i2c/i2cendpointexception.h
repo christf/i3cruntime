@@ -5,9 +5,8 @@
 
 #include "i2caddress.h"
 
-namespace i3c {
-namespace sys {
 namespace i2c {
+namespace sys {
 
 
 //! Exception during I2C communication via an endpoint.
@@ -41,7 +40,5 @@ private:
         const int m_error ;
         const std::string m_what;
 };
-
-} // namespace i2c
 } // namespace sys
-} // namespace i3c
+} // namespace i2c

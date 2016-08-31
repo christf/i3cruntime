@@ -19,9 +19,8 @@
 #include "i2cendpointexception.h"
 #include "i2cpacket.h"
 
-namespace i3c {
-namespace sys {
 namespace i2c {
+namespace sys {
 
 //TODO check read/write return types!
 
@@ -54,7 +53,5 @@ private:
         I2CAddress m_address;
 };
 
-
-} // namespace i2c
 } // namespace sys
-} // namespace i3c
+} // namespace i2c

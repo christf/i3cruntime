@@ -60,7 +60,6 @@ sys/i2c/i2cendpointexception.cpp
 master/i3cendpoint.cpp
 master/i2cconfig.cpp
 server.cpp
-master/i3cendpointbroker.cpp
 master/i3c_commhandler.cpp
 master/operation.cpp
 ${WIRINGPI_FILES}
