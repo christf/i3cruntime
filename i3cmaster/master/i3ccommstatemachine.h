@@ -51,10 +51,10 @@ public:
     uint8_t getError() const noexcept;
 
     //! get the next I2C request
-    std::shared_ptr<i3c::sys::i2c::I2CPacket> nextI2cRequest() throw(std::logic_error);
+    std::shared_ptr<i2c::sys::I2CPacket> nextI2cRequest() throw(std::logic_error);
 
     //! process the I2C response
-    void processI2cResponse(const i3c::sys::i2c::I2CPacket packet) throw(std::logic_error);
+    void processI2cResponse(const i2c::sys::I2CPacket packet) throw(std::logic_error);
 
 private:
     const I2CAddress m_peer;
@@ -63,8 +63,8 @@ private:
 private:
     uint16_t m_packetCounter;
     CommState m_state;
-    std::shared_ptr<i3c::sys::i2c::I2CPacket> m_lastPacket;
-    std::shared_ptr<i3c::sys::i2c::I2CPacket> m_nextPacket;
+    std::shared_ptr<i2c::sys::I2CPacket> m_lastPacket;
+    std::shared_ptr<i2c::sys::I2CPacket> m_nextPacket;
     uint8_t m_frameProgress;
 };
 

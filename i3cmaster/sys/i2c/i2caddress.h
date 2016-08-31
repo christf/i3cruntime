@@ -19,9 +19,8 @@
 #include <cstdint>
 #include <stdexcept>
 
-namespace i3c {
-namespace sys {
 namespace i2c {
+namespace sys {
 
 //! Representation of an address on the i2c bus
 class I2CAddress
@@ -62,6 +61,5 @@ private:
 };
 
 
-} // namespace i2c
 } // namespace sys
-} // namespace i3c
+} // namespace i2c

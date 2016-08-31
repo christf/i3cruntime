@@ -19,9 +19,8 @@
 #include <cstdint>
 #include <chrono>
 
-namespace i3c {
-namespace sys {
 namespace i2c {
+namespace sys {
 
 I2CDispatcher::I2CDispatcher(std::weak_ptr<I2CEndpointBroker> broker) throw(std::invalid_argument)
 : m_broker(broker),
@@ -180,6 +179,5 @@ I2CPacket&& I2CDispatcher::processI2CPacket(const I2CPacket packet) throw (std::
   return std::move(endpoint->process(packet));
 }
 
-} // namespace i2c
 } // namespace sys
-} // namespace i3c
+} // namespace i2c

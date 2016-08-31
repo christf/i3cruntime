@@ -52,7 +52,10 @@
     
 using boost::asio::ip::tcp;
 using namespace libconfig;
-using namespace i3c::sys::i2c;
+using namespace i2c::sys;
+
+namespace i2c {
+namespace master {
 class Server
 {
 public:
@@ -73,7 +76,7 @@ class Session
   : public std::enable_shared_from_this<Session>
 {
 public:
-  Session(tcp::socket socket,std::deque<std::shared_ptr<i3c::sys::i2c::I2CPacket>> queue);
+  Session(tcp::socket socket,std::deque<std::shared_ptr<I2CPacket>> queue);
   void start();
   
   // this is the callback method that gets executed upon an i2c-Response
@@ -90,9 +93,10 @@ private:
   tcp::socket socket_;
   enum { max_length = 1024 };
   char data_[max_length];
-  std::deque<std::shared_ptr<i3c::sys::i2c::I2CPacket>> m_queue;
+  std::deque<std::shared_ptr<I2CPacket>> m_queue;
 };
 
 
-
+} // namespace master
+} // namespace i2c
 #endif

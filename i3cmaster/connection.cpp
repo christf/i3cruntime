@@ -1,7 +1,7 @@
 #include "connection.h"
 
 
-using namespace i3c::sys::i2c;
+// using namespace i3c::sys::i2c;
 
 
 /*

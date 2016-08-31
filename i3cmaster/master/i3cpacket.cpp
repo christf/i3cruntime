@@ -1,6 +1,7 @@
 #include "i3cpacket.h"
 
-using namespace i3c::sys::i2c;
+// using namespace i2c::sys;
+using namespace i3c::sys;
 
 I3CPacket::I3CPacket ( const uint8_t data,
 		       const I2CAddress destination,
@@ -73,7 +74,7 @@ bool I3CPacket::isValidCRC() const
 }
 
 
-i3c::sys::i2c::I2CPacket I3CPacket::render()
+I2CPacket I3CPacket::render()
 {
     uint16_t i2cdata;
     i2cdata = getMeta();
@@ -124,8 +125,9 @@ uint8_t I3CPacket::CRC5x12 ( uint8_t const crc, uint8_t const data ) const
     return remainder;
 }
 
-
-std::ostream& operator<< ( std::ostream &out, const I3CPacket &packet )
+/*
+// FIXME: WIE kann die Ausgabe erfolgen ohne nervige is-private-Fehlermeldungen?
+std::ostream& operator<< ( std::ostream &out, I3CPacket &packet )
 {
     std::bitset<8> bdest ( packet.m_destination );
     std::bitset<8> bmeta ( packet.getMeta() );
@@ -134,7 +136,7 @@ std::ostream& operator<< ( std::ostream &out, const I3CPacket &packet )
         " (" << bmeta << ") data: " << unsigned ( packet.m_data ) << "(" << bdata  << ") ]" << std::endl;
     return out;
 }
-
+*/
 
 /*
 

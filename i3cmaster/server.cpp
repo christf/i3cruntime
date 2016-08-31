@@ -1,13 +1,14 @@
 #include "server.h"
 #include "sys/i2c/i2cdispatcher.h"
 #include "platform/rpi/wiringpii2cendpointbroker.h"
-using namespace i3c::sys::i2c;
+using namespace i2c::sys;
+using namespace i2c::master;
 
-  Server::Server(boost::asio::io_service& io_service, short port,  std::deque<std::shared_ptr<i3c::sys::i2c::I2CPacket>> packetqueue)
+  Server::Server(boost::asio::io_service& io_service, short port,  std::deque<std::shared_ptr<I2CPacket>> packetqueue)
     : acceptor_(io_service, tcp::endpoint(tcp::v4(), port)), m_queue(packetqueue), socket_(io_service)
   {
-    i3c::platform::rpi::WiringPiI2CEndpointBroker i2cEndpointBroker;
-    std::vector<i3c::sys::i2c::I2CAddress> connectedDevices = i2cEndpointBroker.scan();
+    i2c::platform::rpi::WiringPiI2CEndpointBroker i2cEndpointBroker;
+    std::vector<I2CAddress> connectedDevices = i2cEndpointBroker.scan();
   
     for ( int i = 0; i< connectedDevices.size();i++)
     {
@@ -16,7 +17,7 @@ using namespace i3c::sys::i2c;
   
     // TODO - hier weitermachen: dispatcher sauber instanziieren.
   
-    I2CDispatcher dispatcher( std::make_shared<i3c::platform::rpi::WiringPiI2CEndpointBroker>(i2cEndpointBroker));
+ //   I2CDispatcher dispatcher( std::make_shared<i3c::platform::rpi::WiringPiI2CEndpointBroker>(i2cEndpointBroker));
     do_accept();
   }
 
@@ -38,7 +39,7 @@ using namespace i3c::sys::i2c;
   
 
 
-  Session::Session(tcp::socket socket,std::deque<std::shared_ptr<i3c::sys::i2c::I2CPacket>> queue)
+  Session::Session(tcp::socket socket,std::deque<std::shared_ptr<I2CPacket>> queue)
     : socket_(std::move(socket)),m_queue(queue)
   {
   }
@@ -63,23 +64,23 @@ constexpr unsigned long long operator "" _hash(char const* p, size_t)
   return hash(p);
 }
 
-i3c::sys::i2c::I2COperation strtoOp(std::string strop) {
+I2COperation strtoOp(std::string strop) {
 
   switch(hash(strop.c_str())){
-    case "READ_SIMPLE"_hash:  return i3c::sys::i2c::I2COperation::READ_SIMPLE;
-    case "WRITE_SIMPLE"_hash:  return i3c::sys::i2c::I2COperation::WRITE_SIMPLE;
-    case "READ_REG_8"_hash: return i3c::sys::i2c::I2COperation::READ_REG_8;
-    case "READ_REG_16"_hash: return i3c::sys::i2c::I2COperation::READ_REG_16;
-    case "WRITE_REG_8"_hash: return i3c::sys::i2c::I2COperation::WRITE_REG_8;
-    case "WRITE_REG_16"_hash: return i3c::sys::i2c::I2COperation::WRITE_REG_16;
+    case "READ_SIMPLE"_hash:  return I2COperation::READ_SIMPLE;
+    case "WRITE_SIMPLE"_hash:  return I2COperation::WRITE_SIMPLE;
+    case "READ_REG_8"_hash: return I2COperation::READ_REG_8;
+    case "READ_REG_16"_hash: return I2COperation::READ_REG_16;
+    case "WRITE_REG_8"_hash: return I2COperation::WRITE_REG_8;
+    case "WRITE_REG_16"_hash: return I2COperation::WRITE_REG_16;
   }
 }
 
 
 
-std::vector<i3c::sys::i2c::I2CPacket> genpacket ( const std::string s_config )
+std::vector<I2CPacket> genpacket ( const std::string s_config )
 {
-    std::vector <i3c::sys::i2c::I2CPacket> packets;
+    std::vector <I2CPacket> packets;
 
 
     libconfig::Config cfg;
@@ -98,7 +99,7 @@ std::vector<i3c::sys::i2c::I2CPacket> genpacket ( const std::string s_config )
 
         for ( int i = 0; i < count; ++i ) {
 
-            i3c::sys::i2c::I2COperation op;
+            I2COperation op;
             int reg=0;
             int data=0;
             std::string strop;
@@ -116,14 +117,14 @@ std::vector<i3c::sys::i2c::I2CPacket> genpacket ( const std::string s_config )
             }
 
 //             seqNo = configextract ( &cfg, "Sequence" );
-            i3c::sys::i2c::I2CAddress peer ( addressdata );
+            I2CAddress peer ( addressdata );
 	    op = strtoOp(strop);
 	    if (   packet.lookupValue ( "Register", reg ) ) {
 // 	     std::cout << "hier drin" << reg << " op: " << strop << std::endl;
-                packets.push_back ( i3c::sys::i2c::I2CPacket ( seqNo, peer, op, reg, data ) );
+                packets.push_back ( I2CPacket ( seqNo, peer, op, reg, data ) );
             } else {
 // 	      std::cout << "da drin" << reg << " op: " << strop << std::endl;
-                packets.push_back ( i3c::sys::i2c::I2CPacket ( seqNo, peer, op,  data ) );
+                packets.push_back ( I2CPacket ( seqNo, peer, op,  data ) );
             }
         }
     } catch ( const libconfig::SettingNotFoundException &nfex ) {
@@ -134,7 +135,7 @@ std::vector<i3c::sys::i2c::I2CPacket> genpacket ( const std::string s_config )
 
   void Session::parse() {
     for (auto i: genpacket(data_)) { 
-         m_queue.push_back(std::make_shared<i3c::sys::i2c::I2CPacket>(i));
+         m_queue.push_back(std::make_shared<I2CPacket>(i));
 	 std::cout << "added i2cpacket to working queue: " <<  i << std::endl;
     }
   }

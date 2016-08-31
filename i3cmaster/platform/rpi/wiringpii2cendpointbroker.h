@@ -20,9 +20,9 @@
 #include <map>
 #include <mutex>
 
-using namespace i3c::sys::i2c;
+using namespace i2c::sys;
 
-namespace i3c {
+namespace i2c {
 namespace platform {
 namespace rpi {
 
@@ -44,4 +44,4 @@ private:
 
 } // namespace rpi
 } // namespace platform
-} // namespace i3c
+} // namespace i2c

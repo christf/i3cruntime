@@ -16,9 +16,8 @@
 
 #include "i2cpacket.h"
 
-namespace i3c {
-namespace sys {
 namespace i2c {
+namespace sys {
 
 I2CPacket::I2CPacket(const uint16_t seqNo,
 		     const I2CAddress peer,
@@ -111,6 +110,5 @@ const uint16_t I2CPacket::data() const throw()
   return m_data;
 }
 
-} // namespace i2c
 } // namespace sys
-} // namespace i3c
+} // namespace i2c

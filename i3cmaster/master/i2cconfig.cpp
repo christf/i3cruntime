@@ -29,7 +29,7 @@
 	  continue;
 	}
 	eprio = i3c::master::stringToEnum ( prio );
-	const i3c::sys::i2c::I2CAddress adr ( address );
+	const I2CAddress adr ( address );
 
 	m_i3cendpoints.push_back( std::make_shared<i3c::master::I3CEndpoint> ( adr,eprio ) );
       }

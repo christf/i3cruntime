@@ -34,8 +34,9 @@ using namespace std;
 #include "../master/i3cendpoint.h"
 #include "i2cconfig.h"
 
-using namespace i3c::sys::i2c;
-
+using namespace i3c::sys;
+using namespace i2c::master;
+using namespace i2c::sys;
 
 
 
@@ -59,7 +60,7 @@ int main()
   {
     boost::asio::io_service io_service;
     // TODO: Thread zum auslesen (und zunächst anzeigen, später zum auf den i2cbus-legen) der packetqueue
-    std::deque<std::shared_ptr<i3c::sys::i2c::I2CPacket>> packetqueue;
+    std::deque<std::shared_ptr<I2CPacket>> packetqueue;
     Server s(io_service, i2cconfig.getport(), packetqueue);
 
     io_service.run();

@@ -15,9 +15,8 @@
 
 #include "i2cendpoint.h"
 
-namespace i3c {
-namespace sys {
 namespace i2c {
+namespace sys {
 
 I2CEndpoint::I2CEndpoint(const I2CAddress address) throw (I2CEndpointException)
   : m_address(address)
@@ -37,4 +36,4 @@ const I2CAddress I2CEndpoint::address() const throw ()
 
 } // namespace i2c
 } // namespace sys
-} // namespace i3c
+

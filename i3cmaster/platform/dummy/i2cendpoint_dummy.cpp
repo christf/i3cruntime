@@ -44,11 +44,11 @@ int __dummy_input(const std::string msg) {
 } // anon namespace
 
 
-namespace i3c {
+namespace i2c {
 namespace platform {
 namespace dummy {
 
-DummyI2CEndpoint::DummyI2CEndpoint(const sys::i2c::I2CAddress address) throw(I2CEndpointException)
+DummyI2CEndpoint::DummyI2CEndpoint(const i2c::sys::I2CAddress address) throw(I2CEndpointException)
   : I2CEndpoint(address)
 {
     std::stringstream msg("");
