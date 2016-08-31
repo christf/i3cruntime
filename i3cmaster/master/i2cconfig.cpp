@@ -2,7 +2,7 @@
   
   I2CMConfig::I2CMConfig(std::string filename) {
     libconfig::Config cfg;
-    // Read the file. If there is an error, report it and exit.
+    // Read the file. If there is an error, report an d abort
     try {
         cfg.readFile ( filename.c_str() );
 
@@ -10,11 +10,11 @@
 	cfg.lookupValue ( "name", m_name );
 	cfg.lookupValue ( "bus", m_bus );
 	 const Setting& root = cfg.getRoot();
-	 const Setting &i3c = root["endpoints"]["i3c"];
-      int count = i3c.getLength();
+	 const Setting &i2c = root["endpoints"]["i2c"];
+      int count = i2c.getLength();
 
       for ( int i = 0; i < count; ++i ) {
-	const Setting &i3ce = i3c[i];
+	const Setting &i2ce = i2c[i];
 
 	// Only output the record if all of the expected fields are present.
 	string name ;
@@ -22,9 +22,9 @@
 	int address;
 	string prio;
 	enum i3c::master::endpoint_priority eprio;
-	if ( ! ( i3ce.lookupValue ( "name", name )
-	  && i3ce.lookupValue ( "address", address )
-	  && i3ce.lookupValue ( "buspriority", prio )
+	if ( ! ( i2ce.lookupValue ( "name", name )
+	  && i2ce.lookupValue ( "address", address )
+	  && i2ce.lookupValue ( "buspriority", prio )
 	) ) {
 	  continue;
 	}

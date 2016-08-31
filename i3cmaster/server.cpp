@@ -1,11 +1,22 @@
 #include "server.h"
-
-
+#include "sys/i2c/i2cdispatcher.h"
+#include "platform/rpi/wiringpii2cendpointbroker.h"
+using namespace i3c::sys::i2c;
 
   Server::Server(boost::asio::io_service& io_service, short port,  std::deque<std::shared_ptr<i3c::sys::i2c::I2CPacket>> packetqueue)
-    : acceptor_(io_service, tcp::endpoint(tcp::v4(), port)), m_queue(packetqueue), 
-      socket_(io_service)
+    : acceptor_(io_service, tcp::endpoint(tcp::v4(), port)), m_queue(packetqueue), socket_(io_service)
   {
+    i3c::platform::rpi::WiringPiI2CEndpointBroker i2cEndpointBroker;
+    std::vector<i3c::sys::i2c::I2CAddress> connectedDevices = i2cEndpointBroker.scan();
+  
+    for ( int i = 0; i< connectedDevices.size();i++)
+    {
+      i2cEndpointBroker.endpoint(connectedDevices.at(i));
+    }
+  
+    // TODO - hier weitermachen: dispatcher sauber instanziieren.
+  
+    I2CDispatcher dispatcher( std::make_shared<i3c::platform::rpi::WiringPiI2CEndpointBroker>(i2cEndpointBroker));
     do_accept();
   }
 
@@ -128,6 +139,12 @@ std::vector<i3c::sys::i2c::I2CPacket> genpacket ( const std::string s_config )
     }
   }
   
+void Session::handle_received()
+{
+  
+}
+
+  
   void Session::do_read()
   {
     auto self(shared_from_this());
@@ -135,14 +152,24 @@ std::vector<i3c::sys::i2c::I2CPacket> genpacket ( const std::string s_config )
 //         [this, self](boost::system::error_code ec, std::size_t length)
     socket_.async_read_some(boost::asio::buffer(data_, max_length),
         [this, self](boost::system::error_code ec, std::size_t length)
-        {	  
+	{ 
           if (!ec)
           {
 	    parse();
+	    if (parsesuccess_) 
+	    {
+	      i2c_send_packets();
+	    }
             do_write(parsesuccess_);
           }
         });
   }
+  
+void Session::i2c_send_packets()
+{
+// hand the i2c-packets to the i2c-dispatcher and obtain result 
+
+}
 
   void Session::do_write(bool success)
   {

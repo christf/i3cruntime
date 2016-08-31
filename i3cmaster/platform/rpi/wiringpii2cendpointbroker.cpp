@@ -72,6 +72,7 @@ std::shared_ptr< I2CEndpoint > WiringPiI2CEndpointBroker::endpoint(const I2CAddr
  * are NOT supported! (due to code brokenness)
  */
 #define I2C_SLAVE	0x0703	/* Use this slave address */
+// TODO: make the I2C_SLAVE address configurable via i2cmaster.cfg
 
 
 std::vector< I2CAddress >&& WiringPiI2CEndpointBroker::scan() throw (I2CEndpointException)
