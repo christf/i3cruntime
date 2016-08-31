@@ -26,7 +26,7 @@
 #include <iostream>
 #include <bitset>
 
-using namespace i3c::sys::i2c;
+using namespace i2c::sys;
 namespace i3c
 {
 namespace master 

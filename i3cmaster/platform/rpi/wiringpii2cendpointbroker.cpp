@@ -26,7 +26,7 @@
 #include <wiringPiI2C.h>
 
 
-using namespace i3c::sys::i2c;
+// using namespace i3c::sys::i2c;
 using namespace i2c::platform::rpi;
 
 namespace i2c {

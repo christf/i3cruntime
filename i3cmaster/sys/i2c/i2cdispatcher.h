@@ -27,9 +27,8 @@
 #include "i2cendpointbroker.h"
 
 
-namespace i3c {
-namespace sys {
 namespace i2c {
+namespace sys {
 
 class I2CDispatchResponseHandler {
 public:
@@ -112,6 +111,5 @@ private:
   std::condition_variable m_dispatched;
 };
 
-} // namespace i2c
 } // namespace sys
-} // namespace i3c
+} // namespace i2c

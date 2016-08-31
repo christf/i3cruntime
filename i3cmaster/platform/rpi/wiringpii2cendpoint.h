@@ -18,6 +18,7 @@
 #include "../../sys/i2c/i2cendpoint.h"
 
 
+using namespace i2c::sys;
 
 namespace i2c {
 namespace platform {
@@ -49,4 +50,4 @@ private:
 
 } // namespace rpi
 } // namespace platform
-} // namespace i3c
+} // namespace i2c

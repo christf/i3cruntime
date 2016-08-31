@@ -1,9 +1,8 @@
 
 #include "i2cendpointexception.h"
 
-namespace i3c {
-namespace sys {
 namespace i2c {
+namespace sys {
 
 I2CEndpointException::I2CEndpointException (const I2CAddress address, const int error, const std::string& msg)
   : m_address ( address ), m_error ( error ), m_what ( msg ) { }
@@ -25,6 +24,5 @@ const char* I2CEndpointException::what() const throw()
     return m_what.c_str();
 }
 
-} // namespace i2c
 } // namespace sys
-} // namespace i3c
+} // namespace i2c

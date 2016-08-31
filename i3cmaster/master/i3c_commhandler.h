@@ -7,7 +7,7 @@
 
 #include "i3cendpoint.h"
 #include <sys/stat.h>
-using namespace i3c::sys::i2c;
+using namespace i3c::sys;
 
 namespace i3c {
 namespace master {

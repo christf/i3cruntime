@@ -10,6 +10,8 @@
 
 
 using namespace i2c::sys;
+namespace i3c {
+namespace sys {
 class I3CPacket
 {
 private:
@@ -48,11 +50,12 @@ public:
 	//! for easy printing
         friend std::ostream& operator<< ( std::ostream &out, const I3CPacket &packet );
 
-
-
-private:
         //! check if the package contains a valid crc
         bool isValidCRC () const;
+	
+
+private:
+
 	//! function to calculate the 5-bit-CRCsum of the packet
 	uint8_t calc_crc() const;
 	//! helper function to calculate the 5-bit CRCsum of one byte
@@ -62,3 +65,5 @@ private:
 };
 
 
+} // namespace sys
+} // namespace i3c

@@ -26,9 +26,10 @@
 
 #include <wiringPiI2C.h>
 
-using namespace i3c::sys::i2c;
+using namespace i2c::platform::rpi;
+using namespace i2c::sys;
 
-namespace i3c {
+namespace i2c {
 namespace platform {
 namespace rpi {
 
@@ -110,4 +111,4 @@ I2CPacket&& WiringPiI2CEndpoint::process(const I2CPacket request) throw (I2CEndp
 
 } // namespace rpi
 } // namespace platform
-} // namespace i3c
+} // namespace i2c

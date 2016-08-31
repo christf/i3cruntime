@@ -7,7 +7,7 @@
 #include "../api/i3c.h"
 #include "i3cpacket.h"
 
-using i3c::sys::i2c::I2CPacket;
+using namespace i3c::sys;
 
 namespace i3c {
 namespace master {
