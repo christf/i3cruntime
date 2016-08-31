@@ -25,21 +25,14 @@ uint8_t I3CPacket::getMeta() const
     return meta;
 }
 
-I3CPacket::I3CPacket ( const I2CAddress source, const uint16_t data ) throw ( std::invalid_argument )
+I3CPacket::I3CPacket ( const I2CAddress source, const uint16_t data )
 : m_data( (uint8_t)( data & 0x00FF ) ),
   m_destination(source),
   m_packetcount( static_cast<packetcounter>(data>> 15) ),
   m_status( static_cast<i3c_packet_state>((data & 0x6000) >> 13)),
   m_crc( (data & 0x1f00) >>8 )
 {
-    // TODO should the members be set to 0 if an exception is raised?
-    // Tux: I would not raise the exception here. isValid tells if the packet is fine.
-    if (!isValidCRC())
-    {
-      std::stringstream ss;
-      ss << this << "calculated crc: " << calc_crc();
-      throw std::invalid_argument(std::string("CRC from the input value does not match the data: ") + ss.str());
-    }
+   
 }
 
 const uint8_t I3CPacket::getData() const noexcept

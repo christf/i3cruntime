@@ -25,15 +25,14 @@ public:
 		    const enum packetcounter pc,
 		    const enum i3c_packet_state st );
 
-	// TODO is std::exception adequate here?
 	//! Create an I3CPacket from 2 bytes serialized data that may have been transported over the i2c-bus.
 	/**
 	 * The metadata-byte is in the front.
 	 * This will fail if the crc does not match.
 	 */
         I3CPacket ( const I2CAddress source,
-		    const uint16_t data ) throw (std::invalid_argument);
-
+		    const uint16_t data );
+	
 	const uint8_t getData() const noexcept;
 
 	const I2CAddress& getDestination() const noexcept;
